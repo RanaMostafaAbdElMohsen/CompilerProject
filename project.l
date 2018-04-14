@@ -41,7 +41,7 @@
 "if"             		return IF;
 "else"           		return ELSE;
 "print"        			return PRINT;
-"bool"				return BOOL;
+"bool"				    return BOOL;
 "int"					return INT;
 "float"					return FLOAT;
 "double"				return DOUBLE;
@@ -50,11 +50,14 @@
 "string"				return STRING;
 "const"                 return CONST;
 "do"					return DO;
+"break"                 return BREAK;
 "switch"                return SWITCH;
 "case"                  return CASE;
 "end"                   return END;
 "false"					return FALSE;
 "true"					return TRUE;
+"default"               return DEFAULT;
+
 [0-9]+                  return INTEGERNUMBER;
 [0-9]+\.[0-9]+          return FLOATNUMBER;
 \"[\x23-\x7E]*\"     	return TEXT;

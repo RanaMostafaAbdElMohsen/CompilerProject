@@ -1,0 +1,40 @@
+bool x=false;
+int i=0;
+if(i==0)
+{
+}
+while(a>0)
+{
+}
+const int a=0;
+x=x+2;
+y=y/2;
+z=z*2;
+
+for(int i=0;i<10;i++)
+{
+}
+
+do {
+a=1;
+}while(a<0);
+
+print a ;
+
+switch (x)
+{
+  case 1:
+	int x;
+	break;
+
+   case 2:
+	int x;
+	break;
+   
+    default:
+	int z;
+	break;
+		
+
+}
+

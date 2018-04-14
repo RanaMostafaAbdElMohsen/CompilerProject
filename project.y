@@ -27,7 +27,7 @@ function :      function stmt
 		|
 		;
 		
-stmt:		  type IDENTIFIER 								SEMICOLON	{printf("Declaration\n");}
+stmt:   type IDENTIFIER 								SEMICOLON	{printf("Declaration\n");}
 
 		| IDENTIFIER ASSIGN expression							SEMICOLON	{printf("Assignment\n");}
 
@@ -118,7 +118,7 @@ expression: no_declaration
 			| booleanExpression ;
 
 caseExpression: DEFAULT COLON stmtlist BREAK SEMICOLON                              {printf("default\n");}
-			   | CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON caseExpression 	{printf("case\n");}		
+			   | CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON   caseExpression  {printf("case\n");}		
 			   ;
 
 %% 
