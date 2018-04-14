@@ -42,6 +42,7 @@
 "if"             		return IF;
 "else"           		return ELSE;
 "print"        			return PRINT;
+"bool"				return BOOL;
 "int"					return INT;
 "float"					return FLOAT;
 "double"				return DOUBLE;

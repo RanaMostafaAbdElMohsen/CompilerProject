@@ -1,4 +1,4 @@
-%token SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER
+%token SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
 
 %left ASSIGN
 %left PLUS MINUS 
@@ -27,7 +27,9 @@ function :      function stmt
 		
 stmt:		  type IDENTIFIER 								SEMICOLON	{printf("Declaration");}
 
-		| type IDENTIFIER ASSIGN expression						SEMICOLON	{printf("Assignment");}
+		| IDENTIFIER ASSIGN expression							SEMICOLON	{printf("Assignment");}
+
+		| type IDENTIFIER ASSIGN expression						SEMICOLON	{printf("Declaration and Assignment");}
 
 		| CONST type IDENTIFIER ASSIGN expression					SEMICOLON	{printf("Constant assignment");}
 
@@ -69,6 +71,7 @@ type:		  INT
 		| LONG
 		| CHAR
 		| STRING
+		| BOOL
 		;
 
 no_declaration:   FLOATNUMBER
@@ -101,14 +104,16 @@ booleanExpression: 	  FALSE
 			| no_declaration LESS no_declaration 
 			| no_declaration GE no_declaration 
 			| no_declaration LE no_declaration
-			| expr NE expr | expr EQ expr ;
+			| expression NE expression | expression EQ expression ;
 					
 
-expr: 	  no_declaration
-	| CHARACTER 
-	| TEXT
-	| booleanExpression ;
+expression: 	  no_declaration
+		| CHARACTER 
+		| TEXT
+		| booleanExpression ;
 
+caseExpression:
+		;
 
 %% 
  int yyerror(char *s) {     fprintf(stderr, "%s\n", s);     return 0; }
