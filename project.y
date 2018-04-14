@@ -119,7 +119,7 @@ caseExpression:
  int yyerror(char *s) {     fprintf(stderr, "%s\n", s);     return 0; }
  
  int main(void) 
- {    yyin = fopen(argv[1], "r");
+ {    yyin = fopen("input.txt", "r");
 	f1=fopen("output.txt","w");
 	
    if(!yyparse())
