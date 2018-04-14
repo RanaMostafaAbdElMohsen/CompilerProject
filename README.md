@@ -1,7 +1,8 @@
-#Compilers Project
+Compilers Project
 
 Commands to run
 
-yadd -d project.y
+yacc -d project.y
+
 lex project.l
 
