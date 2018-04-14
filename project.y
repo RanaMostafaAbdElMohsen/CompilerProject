@@ -12,7 +12,7 @@
 	#include <stdio.h>   
 	int yyerror(char *);
 	int yylex(void);
-     
+
 %}
 
 
@@ -34,7 +34,7 @@ stmt:		  type IDENTIFIER 								SEMICOLON	{printf("Declaration");}
 
 		| WHILE ORBRACKET booleanExpression ERBRACKET stmt						{printf("While loop");}
 
-		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET 					{printf("Do while");}
+		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET 			SEMICOLON	{printf("Do while");}
 
 		| FOR ORBRACKET type IDENTIFIER ASSIGN expression SEMICOLON 
 		  booleanExpression SEMICOLON 
