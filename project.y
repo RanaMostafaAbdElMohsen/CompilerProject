@@ -1,4 +1,4 @@
-%token SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
+%token BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
 
 %left ASSIGN
 %left PLUS MINUS 
@@ -12,6 +12,8 @@
 	#include <stdio.h>   
 	int yyerror(char *);
 	int yylex(void);
+	FILE * f1;
+	FILE * yyin;
 
 %}
 
@@ -25,47 +27,49 @@ function :      function stmt
 		|
 		;
 		
-stmt:		  type IDENTIFIER 								SEMICOLON	{printf("Declaration");}
+stmt:		  type IDENTIFIER 								SEMICOLON	{printf("Declaration\n");}
 
-		| IDENTIFIER ASSIGN expression							SEMICOLON	{printf("Assignment");}
+		| IDENTIFIER ASSIGN expression							SEMICOLON	{printf("Assignment\n");}
 
-		| type IDENTIFIER ASSIGN expression						SEMICOLON	{printf("Declaration and Assignment");}
+		| type IDENTIFIER ASSIGN expression						SEMICOLON	{printf("Declaration and Assignment\n");}
 
-		| CONST type IDENTIFIER ASSIGN expression					SEMICOLON	{printf("Constant assignment");}
+		| CONST type IDENTIFIER ASSIGN expression					SEMICOLON	{printf("Constant assignment\n");}
 
 
-		| WHILE ORBRACKET booleanExpression ERBRACKET stmt						{printf("While loop");}
+		| WHILE ORBRACKET booleanExpression ERBRACKET stmt						{printf("While loop\n");}
 
-		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET 			SEMICOLON	{printf("Do while");}
+		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET 			SEMICOLON	{printf("Do while\n");}
 
 		| FOR ORBRACKET type IDENTIFIER ASSIGN expression SEMICOLON 
 		  booleanExpression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											{printf("For loop");}
+		  braceScope											{printf("For loop\n");}
 
 		
-		| IF ORBRACKET booleanExpression ERBRACKET stmt	 %prec IFX					{printf("If statement");}
+		| IF ORBRACKET booleanExpression ERBRACKET braceScope	 %prec IFX					{printf("If statement\n");}
 
-		| IF ORBRACKET booleanExpression ERBRACKET stmt	 ELSE stmt					{printf("If-Elsestatement");}
+		| IF ORBRACKET booleanExpression ERBRACKET braceScope	 ELSE braceScope					{printf("If-Elsestatement\n");}
 
-		| SWITCH ORBRACKET IDENTIFIER ERBRACKET braceScope						{printf("Switch case");}
+		| SWITCH ORBRACKET IDENTIFIER ERBRACKET braceScope						{printf("Switch case\n");}
 
 		
-		| PRINT expression 								SEMICOLON	{printf("Print");}
+		| PRINT expression 	SEMICOLON	                      {printf("Print\n");}
 		
-		| function									SEMICOLON	{printf("function");}
+		| func	                                            	{printf("function\n");}
 
-		| braceScope											{printf("New braces scope");}
+		| braceScope											{printf("New braces scope\n");}
 		;
 
-braceScope: 	  OBRACE stmtlist EBRACE									{printf("Stmt brace");}
-		| OBRACE caseExpression EBRACE									{printf("Case brace");}
+func : ;		
+		
+braceScope:  OBRACE stmtlist EBRACE								       {printf("Stmt brace\n");}
+		| OBRACE caseExpression EBRACE									{printf("Case brace\n");}
 		;
 
 stmtlist: 	  stmt 
 		| stmtlist stmt ;
 
-type:		  INT
+type:   INT
 		| FLOAT
 		| DOUBLE
 		| LONG
@@ -96,24 +100,26 @@ forExpression:    IDENTIFIER  INCREMENT
 					
 					
 booleanExpression: 	  FALSE 
-			| TRUE 
-			| booleanExpression AND booleanExpression 
-			| booleanExpression OR booleanExpression 
-			| NOT booleanExpression 
-			| no_declaration GREATER no_declaration 
-			| no_declaration LESS no_declaration 
-			| no_declaration GE no_declaration 
-			| no_declaration LE no_declaration
-			| expression NE expression | expression EQ expression ;
+					| TRUE 
+					| booleanExpression AND booleanExpression 
+					| booleanExpression OR booleanExpression 
+					| NOT booleanExpression 
+					| no_declaration GREATER no_declaration 
+					| no_declaration LESS no_declaration 
+					| no_declaration GE no_declaration 
+					| no_declaration LE no_declaration
+					| expression NE expression 
+					| expression EQ expression ;
 					
 
-expression: 	  no_declaration
-		| CHARACTER 
-		| TEXT
-		| booleanExpression ;
+expression: no_declaration
+			| CHARACTER 
+			| TEXT
+			| booleanExpression ;
 
-caseExpression:
-		;
+caseExpression: DEFAULT COLON stmtlist BREAK SEMICOLON                              {printf("default\n");}
+			   | CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON caseExpression 	{printf("case\n");}		
+			   ;
 
 %% 
  int yyerror(char *s) {     fprintf(stderr, "%s\n", s);     return 0; }
