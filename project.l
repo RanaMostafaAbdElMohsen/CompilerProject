@@ -1,0 +1,69 @@
+  
+%{   
+	 #include <stdlib.h>
+	 #include <stdio.h>
+     int yyerror(char *); 
+	 #include "y.tab.h" 
+%} 
+
+%%
+\{                      return OBRACE;
+\}                      return EBRACE;
+\(						return ORBRACKET;
+\)						return ERBRACKET;
+\[						return OSBRACKET;
+\]						return ESBRACKET;
+;                       return SEMICOLON;
+:                       return COLON; 
+"++"					return INCREMENT;
+"--"					return DECREMENT;
+"+="					return PEQUAL;
+"-="					return MEQUAL;
+"*="					return MULEQUAL;
+"/="					return DIVEQUAL;
+">"         	 		return GREATER;
+"<"         	 		return LESS;
+">="         	 		return GE;
+"<="             		return LE;
+"=="             		return EQ;
+"!="             		return NE;
+"+"						return PLUS;
+"-"						return MINUS;
+"*"						return MUL;
+"/"						return DIV;
+"^"						return POWER;
+"="						return ASSIGN;
+"%"						return REM;
+"&&"					return AND;
+"||"					return OR;
+"!"						return NOT;
+"while"          		return WHILE;
+"for"          			return FOR;
+"if"             		return IF;
+"else"           		return ELSE;
+"print"        			return PRINT;
+"int"					return INT;
+"float"					return FLOAT;
+"double"				return DOUBLE;
+"long"					return LONG;
+"char"					return CHAR;
+"string"				return STRING;
+"const"                 return CONST;
+"do"					return DO;
+"switch"                return SWITCH;
+"case"                  return CASE;
+"end"                   return END;
+"false"					return FALSE;
+"true"					return TRUE;
+[0-9]+                  return INTEGERNUMBER;
+[0-9]+\.[0-9]+          return FLOATNUMBER;
+\"[\x23-\x7E]*\"     	return TEXT;
+\'[\x23-\x7E]?\'        return CHARACTER;
+[a-zA-Z][_a-zA-Z0-9]*   return IDENTIFIER;
+[\t \n]+                /* ignore whitespace */;
+
+
+%% 
+ int yywrap(void)
+ {     return 1; } 
+ 
