@@ -119,5 +119,21 @@ caseExpression:
  int yyerror(char *s) {     fprintf(stderr, "%s\n", s);     return 0; }
  
  int main(void) 
- {     yyparse(); 
- return 0; }
+ {    yyin = fopen(argv[1], "r");
+	f1=fopen("output.txt","w");
+	
+   if(!yyparse())
+	{
+		printf("\nParsing complete\n");
+		fprintf(f1,"hello there");
+	}
+	else
+	{
+		printf("\nParsing failed\n");
+		return 0;
+	}
+	
+	fclose(yyin);
+	fclose(f1);
+    return 0;
+}
