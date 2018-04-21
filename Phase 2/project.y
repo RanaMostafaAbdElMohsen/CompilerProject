@@ -8,20 +8,24 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int per,char * name);
+nodeType * id(int index, int type, int per, int brace, bool init char * name, char * value);
 nodeType * getId(char * name);
 nodeType * con(int value);
 void freeNode(nodeType *p);
-int ex(nodeType *p);
+//int ex(nodeType *p);
 int yylex(void);
-void yyerror(char *s)
+int yyerror(char *s)
+
+int SymSize = 50;
 
 /* symbol table */
-int symType[50];
-int symName[50];
-int symInit[50];
-int symBraces[50];
-int symUsed[50];
+int  symType[SymSize];
+char* symName[SymSize];
+char* symValue[SymSize];
+bool symInit[SymSize];
+bool symUsed[SymSize];
+int  symBraces[SymSize];
+
 %}
 
 %token COMMA RET BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
@@ -35,12 +39,14 @@ int symUsed[50];
 %nonassoc ELSE
 
 %{  
-	#include <stdio.h>   
+	#include <stdio.h>
+	#include "structs.h"   
 	int yyerror(char *);
 	int yylex(void);
 	int yylineno;
 	FILE * f1;
 	FILE * yyin;
+	int indexCount = 0;
 
 %}
 
@@ -54,7 +60,7 @@ function :      function stmt
 		|
 		;
 		
-stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration\n");}
+stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration\n"); /* send indexCount to id(...) then increment it */}
 
 		| IDENTIFIER ASSIGN expression SEMICOLON	          {printf("Assignment\n");}
 
@@ -180,18 +186,54 @@ nodeType *con(int value) {
     return p;
 }
 
-nodeType *id(int i) {
+nodeType * id(int index, int type, int brace, bool init, char * name, char * value)
+{
+    // check if the name already exists in the symName table
+	for (int j=0; j<indexCount; j++)
+	{
+		if (strcmp(name,symName[j]) == 0)
+		{
+			yyerror("Identifier Name already defined before\n");
+			// still need to check the braces ! 
+		}
+	}
+
     nodeType *p;
 
     /* allocate node */
-    if ((p = malloc(sizeof(nodeType))) == NULL)
+    if (p = malloc( (sizeof(nodeType))) == NULL)
         yyerror("out of memory");
 
     /* copy information */
     p->type = typeId;
-    p->id.i = i;
-
+    
+    p->id.index = index;
+    p->id.type 	= type;
+    p->id.per 	= 0;
+    p->id.brace = brace;
+    p->id.name 	= strdup(name);
+    p->id.value = strdup(value);
+    
+    // insert into symbol table
+    symName[index] 	 = strdup(name);
+    symValue[index]	 = strdup(value);
+    symType[index]   = type;
+    symInit[index]	 = init;
+	symUsed[index]	 = false;
+	symBraces[index] = brace;
+	
     return p;
+}
+
+nodeType * getId(char * name)
+{
+	for (int j=0; j<indexCount; j++)
+	{
+		if (strcmp(name,symName[j]) == 0)
+		{
+			
+		}
+	}
 }
 
 nodeType *opr(int oper, int nops, ...) {
