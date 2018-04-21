@@ -62,7 +62,7 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 		| braceScope											{printf("New braces scope\n");}
 		;
 
-func : type IDENTIFIER ORBRACKET arglist ERBRACKET braceScope RET type          {printf("function\n");}
+func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE stmtlist RET  IDENTIFIER  SEMICOLON   EBRACE      {printf("function\n");}
 	   ;
 	   
 arglist:  type IDENTIFIER cont
