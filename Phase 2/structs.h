@@ -4,13 +4,13 @@ typedef enum { Accepted, Redefined, OutOfScope} permission;
 /* constants */
 typedef struct {
     typeEnum type;                  	/* type of constant */
-	char * value;						/* value of constant as char array */
+	char * value;			/* value of constant as char array */
 } conNodeType;
 
 /* identifiers */
 typedef struct {
     int index;          				/* subscript to sym table  and brace table*/
-	typeEnum type; 						/* type */
+	typeEnum type; 					/* type */
 	permission per;
 	char * name;
 } idNodeType;
