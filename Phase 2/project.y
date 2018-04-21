@@ -7,7 +7,7 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int per,char * name, char * value);
+nodeType * id(int index, int type, int brace, bool init, char * name);
 nodeType * getId(char * name);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
@@ -61,6 +61,7 @@ int brace=0;
 
 %type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration
 %type <iValue> Type
+%type <iValue> Constant
 
 %%
 program	: 
@@ -71,50 +72,40 @@ function :      function stmt
 		|
 		;
 		
-stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                 {$$=id(indexCount,$1,brace,0,$2,NULL);printf("Declaration\n");}
+stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                 {$$=id(indexCount,$1,brace,0,$2);printf("Declaration\n");indexCount++;}
 
-		| IDENTIFIER ASSIGN expression SEMICOLON	          {$$ = opr(ASSIGN,2, $1, $3);printf("Assignment\n");}
+		| IDENTIFIER ASSIGN expression SEMICOLON	          {$$ = opr(ASSIGN,2, getId($1), $3); printf("Assignment\n");}
 
-		| Type IDENTIFIER ASSIGN expression	SEMICOLON	      {$$ = opr(ASSIGN,2, $1, $4);printf("Declaration and Assignment\n");}
+		| Type IDENTIFIER ASSIGN expression	SEMICOLON	      {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
 
-		| CONST Type IDENTIFIER ASSIGN expression SEMICOLON   {printf("Constant assignment\n");}
+		| Constant IDENTIFIER ASSIGN expression SEMICOLON    { $$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++;printf("Constant assignment\n");}
 
-        | forExpression SEMICOLON                             {printf("Increments\n");}
+        | forExpression SEMICOLON                             {$$=$1; printf("Increments\n");}
 		
-		| WHILE ORBRACKET booleanExpression ERBRACKET stmt	  {printf("While loop\n");}
+		| WHILE ORBRACKET booleanExpression ERBRACKET stmt	  {$$ = opr(WHILE,2, $3, $5); printf("While loop\n");}
 
-		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET SEMICOLON	{printf("Do while\n");}
+		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET SEMICOLON	{$$ = opr(DO,2, $2, $5);printf("Do while\n");}
 
 		| FOR ORBRACKET INT IDENTIFIER ASSIGN no_declaration SEMICOLON 
 		  booleanExpression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											  {printf("For loop\n");}
+		  braceScope											  {$$ = opr(FOR,5, $4, $6,$8,$10,$12); printf("For loop\n");}
 
 		
-		| IF ORBRACKET booleanExpression ERBRACKET braceScope %prec IFX {printf("If statement\n");}
+		| IF ORBRACKET booleanExpression ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
 
-		| IF ORBRACKET booleanExpression ERBRACKET braceScope	 ELSE braceScope	{printf("If-Elsestatement\n");}
+		| IF ORBRACKET booleanExpression ERBRACKET braceScope	 ELSE braceScope	{$$ = opr(IF, 3, $3, $5, $7); printf("If-Elsestatement\n");}
 
-		| SWITCH ORBRACKET IDENTIFIER ERBRACKET braceScope      {printf("Switch case\n");}
+		| SWITCH ORBRACKET IDENTIFIER ERBRACKET braceScope      {$$ = opr(SWITCH, 2, $3, $5);printf("Switch case\n");}
 
 		
-		| PRINT expression 	SEMICOLON	                        {printf("Print\n");}
-		
-		//| func	                                            	
+		| PRINT expression 	SEMICOLON	                        {$$ = opr(PRINT, 1, $2);printf("Print\n");}
+			                                            	
 
-		| braceScope											{printf("New braces scope\n");}
+		| braceScope											{$$=$1;printf("New braces scope\n");}
 		;
 
-/*func : Type IDENTIFIER ORBRACKET arglist ERBRACKET braceScope RET Type          {printf("function\n");}
-	   ;
 	   
-arglist:  Type IDENTIFIER cont
-;
-
-cont:  COMMA Type IDENTIFIER cont 
-	| 
-;	   
-*/	   
 		
 braceScope:  OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
 			| OBRACE caseExpression EBRACE					    {printf("Case brace\n");}
@@ -129,6 +120,13 @@ Type:   INT  {$$=0;}
 		| STRING {$$=3;}
 		| BOOL {$$=4;}
 		;
+
+Constant : CONST INT {$$=5;}
+          |	CONST FLOAT {$$=6;}
+		  | CONST CHAR {$$=7;}
+          | CONST STRING {$$=8;}
+		  | CONST BOOL {$$=9;}
+		  ;
 
 no_declaration:   FLOATNUMBER
 				| INTEGERNUMBER 
@@ -194,7 +192,7 @@ nodeType *con(char* value, int type) {
     return p;
 }
 
-nodeType * id(int index, int type, int brace, bool init, char * name, char * value)
+nodeType * id(int index, int type, int brace, bool init, char * name)
 {
     // check if the name already exists in the symName table
 	for (int j=0; j<indexCount; j++)
@@ -218,14 +216,11 @@ nodeType * id(int index, int type, int brace, bool init, char * name, char * val
     p->id.index = index;
     p->id.type 	= type;
     p->id.per 	= 0;
-    p->id.used	= false;
-    p->id.brace = brace;
     p->id.name 	= strdup(name);
-    p->id.value = strdup(value);
+  
     
     // insert into symbol table
     symName[index] 	 = strdup(name);
-    symValue[index]	 = strdup(value);
     symType[index]   = type;
     symInit[index]	 = init;
 	symUsed[index]	 = false;
@@ -261,10 +256,8 @@ nodeType * getId(char * name)
     p->id.index = index;
     p->id.type 	= symType[index];
     p->id.per 	= 0;							// may need to be changed
-    p->id.brace = symBraces[index];
     p->id.name 	= strdup(symName[index]);
-    p->id.value = strdup(symValue[index]);
-    p->id.used 	= symUsed[index];
+  
     
     return p;
 	
