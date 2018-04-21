@@ -9,7 +9,8 @@
 %nonassoc ELSE
 
 %{  
-	#include <stdio.h>   
+	#include <stdio.h>
+	#include "structs.h"
 	int yyerror(char *);
 	int yylex(void);
 	int yylineno;
