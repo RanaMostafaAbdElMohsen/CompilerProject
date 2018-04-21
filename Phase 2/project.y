@@ -1,3 +1,29 @@
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include "structs.h"
+
+
+/* prototypes */
+nodeType * opr(int oper, int nops, ...);
+nodeType * id(int index, int type, int per,char * name);
+nodeType * getId(char * name);
+nodeType * con(int value);
+void freeNode(nodeType *p);
+int ex(nodeType *p);
+int yylex(void);
+void yyerror(char *s)
+
+/* symbol table */
+int symType[50];
+int symName[50];
+int symInit[50];
+int symBraces[50];
+int symUsed[50];
+%}
+
 %token COMMA RET BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
 
 %left ASSIGN
@@ -9,8 +35,7 @@
 %nonassoc ELSE
 
 %{  
-	#include <stdio.h>
-	#include "structs.h"
+	#include <stdio.h>   
 	int yyerror(char *);
 	int yylex(void);
 	int yylineno;
