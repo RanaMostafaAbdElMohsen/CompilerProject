@@ -8,7 +8,7 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int per, int brace, bool init char * name, char * value);
+nodeType * id(int index, int type, int brace, bool init char * name, char * value);
 nodeType * getId(char * name);
 nodeType * con(int value);
 void freeNode(nodeType *p);
