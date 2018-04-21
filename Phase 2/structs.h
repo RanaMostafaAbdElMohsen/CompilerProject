@@ -4,13 +4,13 @@ typedef enum { Accepted, Redefined, OutOfScope} permission;
 /* constants */
 typedef struct {
     typeEnum type;                  	/* type of constant */
-	char * value;			/* value of constant as char array */
+	char * value;						/* value of constant as char array */
 } conNodeType;
 
 /* identifiers */
 typedef struct {
     int index;          				/* subscript to sym table  and brace table*/
-	typeEnum type; 					/* type */
+	typeEnum type; 						/* type */
 	permission per;
 	char * name;
 } idNodeType;
@@ -32,9 +32,11 @@ typedef struct nodeTypeTag {
     };
 } nodeType;
 
-extern int symType[50];
-extern int symName[50];
-extern int symInit[50];
-extern int symBraces[50];
-extern int symUsed[50];
+extern int SymSize;
+extern int  symType[SymSize];
+extern char* symName[SymSize];
+extern char* symValue[SymSize];
+extern bool symInit[SymSize];
+extern bool symUsed[SymSize];
+extern int symBraces[SymSize];
 
