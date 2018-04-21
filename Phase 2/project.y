@@ -8,7 +8,7 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int brace, bool init char * name, char * value);
+nodeType * id(int index, int type, int brace, bool init ,char * name, char * value);
 nodeType * getId(char * name);
 nodeType * con(int value);
 void freeNode(nodeType *p);
@@ -210,6 +210,7 @@ nodeType * id(int index, int type, int brace, bool init, char * name, char * val
     p->id.index = index;
     p->id.type 	= type;
     p->id.per 	= 0;
+    p->id.used	= false;
     p->id.brace = brace;
     p->id.name 	= strdup(name);
     p->id.value = strdup(value);
@@ -227,13 +228,38 @@ nodeType * id(int index, int type, int brace, bool init, char * name, char * val
 
 nodeType * getId(char * name)
 {
+	int index;
+	
 	for (int j=0; j<indexCount; j++)
 	{
 		if (strcmp(name,symName[j]) == 0)
 		{
-			
+			index = j;
+			break;
 		}
 	}
+	
+	nodeType *p;
+
+    /* allocate node */
+    if (p = malloc( (sizeof(nodeType))) == NULL)
+        yyerror("out of memory");
+
+	symUsed[index]	 =  true;
+
+    /* copy information */
+    p->type = typeId;
+    
+    p->id.index = index;
+    p->id.type 	= symType[index];
+    p->id.per 	= 0;							// may need to be changed
+    p->id.brace = symBraces[index];
+    p->id.name 	= strdup(symName[index]);
+    p->id.value = strdup(symValue[index]);
+    p->id.used 	= symUsed[index];
+    
+    return p;
+	
 }
 
 nodeType *opr(int oper, int nops, ...) {
