@@ -1,4 +1,3 @@
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,13 +7,16 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int brace, bool init ,char * name, char * value);
+nodeType * id(int index, int type, int per,char * name, char * value);
 nodeType * getId(char * name);
-nodeType * con(int value);
+nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
 //int ex(nodeType *p);
+int yyerror(char *);
 int yylex(void);
-int yyerror(char *s)
+int yylineno;
+FILE * f1;
+FILE * yyin;
 
 int SymSize = 50;
 
@@ -24,11 +26,29 @@ char* symName[SymSize];
 char* symValue[SymSize];
 bool symInit[SymSize];
 bool symUsed[SymSize];
-int  symBraces[SymSize];
+int symBraces[SymSize];
+
+int indexCount=0;
+int brace=0;
 
 %}
+%union {
+    int iValue;                 /* integer value */
+	float fValue;               /* float Value */
+    char * sValue;              /* string value */
+	char  cValue;               /* character value */
+	char * id ;                 /* id value */
+    nodeType *nPtr;             /* node pointer */
+};
 
-%token COMMA RET BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
+%token COMMA RET BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST  ASSIGN POWER FALSE TRUE BOOL
+%token <iValue> INTEGERNUMBER 
+%token <fValue> FLOATNUMBER 
+%token <sValue> TEXT 
+%token <cValue> CHARACTER 
+%token <id>     IDENTIFIER
+
+
 
 %left ASSIGN
 %left PLUS MINUS 
@@ -38,18 +58,9 @@ int  symBraces[SymSize];
 %nonassoc IFX
 %nonassoc ELSE
 
-%{  
-	#include <stdio.h>
-	#include "structs.h"   
-	int yyerror(char *);
-	int yylex(void);
-	int yylineno;
-	FILE * f1;
-	FILE * yyin;
-	int indexCount = 0;
 
-%}
-
+%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration
+%type <iValue> Type
 
 %%
 program	: 
@@ -60,13 +71,13 @@ function :      function stmt
 		|
 		;
 		
-stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration\n"); /* send indexCount to id(...) then increment it */}
+stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                 {$$=id(indexCount,$1,brace,0,$2,NULL);printf("Declaration\n");}
 
-		| IDENTIFIER ASSIGN expression SEMICOLON	          {printf("Assignment\n");}
+		| IDENTIFIER ASSIGN expression SEMICOLON	          {$$ = opr(ASSIGN,2, $1, $3);printf("Assignment\n");}
 
-		| type IDENTIFIER ASSIGN expression	SEMICOLON	      {printf("Declaration and Assignment\n");}
+		| Type IDENTIFIER ASSIGN expression	SEMICOLON	      {$$ = opr(ASSIGN,2, $1, $4);printf("Declaration and Assignment\n");}
 
-		| CONST type IDENTIFIER ASSIGN expression SEMICOLON   {printf("Constant assignment\n");}
+		| CONST Type IDENTIFIER ASSIGN expression SEMICOLON   {printf("Constant assignment\n");}
 
         | forExpression SEMICOLON                             {printf("Increments\n");}
 		
@@ -74,7 +85,7 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 
 		| DO braceScope WHILE ORBRACKET booleanExpression ERBRACKET SEMICOLON	{printf("Do while\n");}
 
-		| FOR ORBRACKET type IDENTIFIER ASSIGN expression SEMICOLON 
+		| FOR ORBRACKET INT IDENTIFIER ASSIGN no_declaration SEMICOLON 
 		  booleanExpression SEMICOLON 
 		  forExpression ERBRACKET
 		  braceScope											  {printf("For loop\n");}
@@ -89,21 +100,21 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 		
 		| PRINT expression 	SEMICOLON	                        {printf("Print\n");}
 		
-		| func	                                            	
+		//| func	                                            	
 
 		| braceScope											{printf("New braces scope\n");}
 		;
 
-func : type IDENTIFIER ORBRACKET arglist ERBRACKET braceScope RET type          {printf("function\n");}
+/*func : Type IDENTIFIER ORBRACKET arglist ERBRACKET braceScope RET Type          {printf("function\n");}
 	   ;
 	   
-arglist:  type IDENTIFIER cont
+arglist:  Type IDENTIFIER cont
 ;
 
-cont:  COMMA type IDENTIFIER cont 
+cont:  COMMA Type IDENTIFIER cont 
 	| 
 ;	   
-	   
+*/	   
 		
 braceScope:  OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
 			| OBRACE caseExpression EBRACE					    {printf("Case brace\n");}
@@ -112,13 +123,11 @@ braceScope:  OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
 stmtlist:  stmt 
 		   | stmtlist stmt ;
 
-type:   INT
-		| FLOAT
-		| DOUBLE
-		| LONG
-		| CHAR
-		| STRING
-		| BOOL
+Type:   INT  {$$=0;}
+		| FLOAT{$$=1;}
+		| CHAR {$$=2;}
+		| STRING {$$=3;}
+		| BOOL {$$=4;}
 		;
 
 no_declaration:   FLOATNUMBER
@@ -148,8 +157,7 @@ forExpression:   IDENTIFIER  INCREMENT
 
 			
 booleanExpression: 	  FALSE 
-					| TRUE
-					| IDENTIFIER	
+					| TRUE	
 					| booleanExpression AND booleanExpression 
 					| booleanExpression OR booleanExpression 
 					| NOT booleanExpression 
@@ -172,7 +180,7 @@ caseExpression: DEFAULT COLON stmtlist BREAK SEMICOLON
 
 %% 
 
-nodeType *con(int value) {
+nodeType *con(char* value, int type) {
     nodeType *p;
 
     /* allocate node */
@@ -181,8 +189,8 @@ nodeType *con(int value) {
 
     /* copy information */
     p->type = typeCon;
-    p->con.value = value;
-
+    p->con.value = strdup(value);
+    p->con.type=type;
     return p;
 }
 
@@ -261,7 +269,6 @@ nodeType * getId(char * name)
     return p;
 	
 }
-
 nodeType *opr(int oper, int nops, ...) {
     va_list ap;
     nodeType *p;

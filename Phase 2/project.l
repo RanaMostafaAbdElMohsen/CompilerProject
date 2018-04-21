@@ -62,11 +62,26 @@
 "return"                return RET;
 
 
-[0-9]+                  return INTEGERNUMBER;
-[0-9]+\.[0-9]+          return FLOATNUMBER;
-\"[\x23-\x7E]*\"     	return TEXT;
-\'[\x23-\x7E]?\'        return CHARACTER;
-[a-zA-Z][_a-zA-Z0-9]*   return IDENTIFIER;
+[0-9]+                  {
+					      yylval.iValue = atoi(yytext);
+						  return INTEGERNUMBER;
+						}
+[0-9]+\.[0-9]+          {
+						  yylval.fValue=atof(yytext);
+						  return FLOATNUMBER;
+						}
+\"[\x23-\x7E]*\"     	{
+						  yylval.sValue=stdrup(yytext);
+						  return TEXT;
+						}
+\'[\x23-\x7E]?\'        {
+						  yylval.cValue=stdrup(yytext);
+						  return CHARACTER;
+						}
+[a-zA-Z][_a-zA-Z0-9]*   {
+						  yylval.id=stdrup(yytext);
+						  return IDENTIFIER;
+						}
 [\t  ]+                /* ignore whitespace */;
 [\n]					{yylineno=yylineno+1;}
 
