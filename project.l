@@ -3,6 +3,7 @@
 	 #include <stdio.h>
      int yyerror(char *); 
 	 #include "y.tab.h" 
+	  int yylineno;
 %} 
 
 %%
@@ -10,10 +11,9 @@
 \}                      return EBRACE;
 \(						return ORBRACKET;
 \)						return ERBRACKET;
-\[						return OSBRACKET;
-\]						return ESBRACKET;
 ;                       return SEMICOLON;
 :                       return COLON; 
+,                       return COMMA;
 "++"					return INCREMENT;
 "--"					return DECREMENT;
 "+="					return PEQUAL;
@@ -53,17 +53,20 @@
 "break"                 return BREAK;
 "switch"                return SWITCH;
 "case"                  return CASE;
-"end"                   return END;
 "false"					return FALSE;
 "true"					return TRUE;
 "default"               return DEFAULT;
+"return"                return RET;
 
-[0-9]+                  return INTEGERNUMBER;
-[0-9]+\.[0-9]+          return FLOATNUMBER;
+
+[0-9]+                  {yylval = atoi(yytext); return INTEGERNUMBER;}
+[0-9]+\.[0-9]+          {yylval = atof(yytext); return FLOATNUMBER;}
 \"[\x23-\x7E]*\"     	return TEXT;
 \'[\x23-\x7E]?\'        return CHARACTER;
 [a-zA-Z][_a-zA-Z0-9]*   return IDENTIFIER;
-[\t \n]+                /* ignore whitespace */;
+[\t  ]+                /* ignore whitespace */;
+[\n]					{yylineno=yylineno+1;}
+
 
 
 %% 
