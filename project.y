@@ -61,6 +61,7 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 		| func	                                            	
 
 		| braceScope											{printf("New braces scope\n");}
+		
 		;
 
 func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE stmtlist RET  IDENTIFIER  SEMICOLON   EBRACE      {printf("function\n");}
@@ -75,6 +76,7 @@ cont:  COMMA type IDENTIFIER cont
 	   
 		
 braceScope:	 OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
+			| OBRACE  EBRACE	
 		;
 
 switchScope:  OBRACE caseExpression EBRACE					    {printf("Case brace\n");}		
@@ -127,6 +129,7 @@ booleanExpression: expression AND expression          { $$ = $1 && $3; }
 			| DataTypes LE DataTypes                  { $$ = $1 <= $3; }
 			| DataTypes NE DataTypes                  { $$ = $1 != $3; }
 			| DataTypes EQ DataTypes                  { $$ = $1 == $3; }
+			| ORBRACKET booleanExpression ERBRACKET
 			;
 		
 
