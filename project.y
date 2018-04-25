@@ -38,19 +38,19 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 
 		| increments SEMICOLON                             {printf("Increments\n");}
 		
-		| WHILE ORBRACKET booleanExpressionAll ERBRACKET stmt	  {printf("While loop\n");}
+		| WHILE ORBRACKET expression ERBRACKET stmt	  {printf("While loop\n");}
 
-		| DO braceScope WHILE ORBRACKET booleanExpressionAll ERBRACKET SEMICOLON	{printf("Do while\n");}
+		| DO braceScope WHILE ORBRACKET expression ERBRACKET SEMICOLON	{printf("Do while\n");}
 
 		| FOR ORBRACKET INT IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
-		  booleanExpression SEMICOLON 
+		  expression SEMICOLON 
 		  forExpression ERBRACKET
 		  braceScope											  {printf("For loop\n");}
 
 		
-		| IF ORBRACKET booleanExpressionAll ERBRACKET braceScope %prec IFX {printf("If statement\n");}
+		| IF ORBRACKET expression ERBRACKET braceScope %prec IFX {printf("If statement\n");}
 
-		| IF ORBRACKET booleanExpressionAll ERBRACKET braceScope	 ELSE braceScope	{printf("If-Elsestatement\n");}
+		| IF ORBRACKET expression ERBRACKET braceScope	 ELSE braceScope	{printf("If-Elsestatement\n");}
 
 		| SWITCH ORBRACKET IDENTIFIER ERBRACKET switchScope      {printf("Switch case\n");}
 
@@ -104,7 +104,7 @@ no_declaration:   FLOATNUMBER                  { $$ = $1; }
 		| IDENTIFIER DECREMENT                 { $$ = $1+1; }
 		| ORBRACKET no_declaration ERBRACKET   { $$ = $2; } ;
 
-increments:   IDENTIFIER  INCREMENT         { $$ = $1+1; }
+increments: IDENTIFIER  INCREMENT              { $$ = $1+1; }
 		 | IDENTIFIER DECREMENT                { $$ = $1+1; }
 		 | IDENTIFIER PEQUAL no_declaration    { $1 = $1+$3; }
 		 | IDENTIFIER MEQUAL no_declaration    { $1 = $1-$3; }
@@ -114,26 +114,31 @@ increments:   IDENTIFIER  INCREMENT         { $$ = $1+1; }
 
 
 forExpression : increments                 {$$=$1;}
-			   | IDENTIFIER ASSIGN no_declaration 
+			   | IDENTIFIER ASSIGN no_declaration ;
 		 
-booleanExpression: 	  FALSE 
-			| TRUE
-			| booleanExpression AND booleanExpression { $$ = $1 && $3; }
-			| booleanExpression OR booleanExpression  { $$ = $1 || $3; }
-			| NOT booleanExpression                   { $$ = ! $2; }
-			| no_declaration GREATER no_declaration   { $$ = $1 > $3; }
-			| no_declaration LESS no_declaration      { $$ = $1 < $3; }
-			| no_declaration GE no_declaration        { $$ = $1 >= $3; }
-			| no_declaration LE no_declaration        { $$ = $1 <= $3; }
-			| no_declaration NE no_declaration        { $$ = $1 != $3; }
-			| no_declaration EQ no_declaration        { $$ = $1 == $3; };
-					
-booleanExpressionAll : booleanExpression
-		      |	IDENTIFIER;
+booleanExpression: expression AND expression          { $$ = $1 && $3; }
+			| expression OR expression                { $$ = $1 || $3; }
+			| NOT expression                          { $$ = ! $2; }
+			| DataTypes GREATER DataTypes  			  { $$ = $1 > $3; }
+			| DataTypes LESS DataTypes                { $$ = $1 < $3; }
+			| DataTypes GE DataTypes                  { $$ = $1 >= $3; }
+			| DataTypes LE DataTypes                  { $$ = $1 <= $3; }
+			| DataTypes NE DataTypes                  { $$ = $1 != $3; }
+			| DataTypes EQ DataTypes                  { $$ = $1 == $3; };
+		
 
-expression:	no_declaration
-		| CHARACTER 
-		| TEXT
+		
+			
+DataTypes:no_declaration
+		| CHARACTER
+		| FALSE 
+	    | TRUE
+		| TEXT;
+			
+
+		      
+
+expression:	DataTypes
 		| booleanExpression ;
 
 caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON                              
