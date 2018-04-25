@@ -1,12 +1,13 @@
 %token COMMA RET BREAK DEFAULT SWITCH DO CASE OBRACE EBRACE ORBRACKET ERBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST INTEGERNUMBER FLOATNUMBER TEXT CHARACTER IDENTIFIER ASSIGN POWER FALSE TRUE BOOL
 
-%right ASSIGN
+%left ASSIGN
 %left GREATER LESS GE LE EQ NE AND OR NOT
 %left PLUS MINUS 
 %left DIV MUL REM
 %left POWER
 %nonassoc IFX
 %nonassoc ELSE
+%nonassoc UMINUS
 
 %{  
 	#include <stdio.h>   
@@ -100,6 +101,7 @@ no_declaration:   FLOATNUMBER                  { $$ = $1; }
 		| no_declaration  DIV	no_declaration { $$ = $1 / $3; }
 		| no_declaration  REM	no_declaration { $$ = $1 % $3; }
 		| no_declaration  POWER	no_declaration { $$ = $1 % $3; }
+		| MINUS no_declaration %prec UMINUS    { $$ = -$1; }
 		| IDENTIFIER INCREMENT                 { $$ = $1+1; }
 		| IDENTIFIER DECREMENT                 { $$ = $1+1; }
 		| ORBRACKET no_declaration ERBRACKET   { $$ = $2; } ;
@@ -124,7 +126,8 @@ booleanExpression: expression AND expression          { $$ = $1 && $3; }
 			| DataTypes GE DataTypes                  { $$ = $1 >= $3; }
 			| DataTypes LE DataTypes                  { $$ = $1 <= $3; }
 			| DataTypes NE DataTypes                  { $$ = $1 != $3; }
-			| DataTypes EQ DataTypes                  { $$ = $1 == $3; };
+			| DataTypes EQ DataTypes                  { $$ = $1 == $3; }
+			;
 		
 
 		
