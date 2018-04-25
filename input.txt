@@ -1,40 +1,73 @@
-bool x=false;
-int i=0;
-if(i==0)
-{
-}
-while(a>0)
-{
-}
-const int a=0;
-x=x+2;
-y=y/2;
-z=z*2;
+int x = 0;
+x ++;
+x = x+5;
+int y;
+bool z;
+z = x == y;
+int r = x / y;
+const float F = 4.18;
+string cufe = "fady";
 
-for(int i=0;i<10;i++)
+if (cufe == "fady" && x >= 10)
 {
+	print cufe;
 }
 
-do {
-a=1;
-}while(a<0);
+if (z)
+{
+	x = r;
+}
+else
+{
+	x = x - r;
+}
 
-print a ;
+bool check = false;
+
+while ( z == true || z)
+{
+	z = false;
+	check = true;
+}
+
+float a;
+
+do 	{
+		a=1;
+	}
+while	(a<0);
+
+print a;
+
+x = 0;
+
+for(int i = 0; i < 10; i++)
+{
+	x ++;
+}
+
+if ( x != 100)
+{
+	print x;
+}
+
+if ( x <= a)
+{
+	char v = 'f';
+	print v;
+}
 
 switch (x)
 {
-  case 1:
-	int x;
+	case 1:
+		int x;
 	break;
 
-   case 2:
-	int x;
+	case 2:
+		int x;
 	break;
    
     default:
-	int z;
-	break;
-		
-
+		int z;
+	break;		
 }
-
