@@ -1,0 +1,132 @@
+
+1. accessing a string is array accessing that we dont handle
+string s = "hello";
+char c = s[0];
+-> parse error
+
+**********************************************************************************
+2. multiple initialization of identifiers
+int a,y;
+-> parse error
+
+**********************************************************************************
+3. the tab and new line aren't recognized as tokens. they can be as follow:
+WHITESPACE  	: (' ' | '\t') -> skip;
+NEWLINE     	: ('\r'? '\n' | '\r')+ -> skip;
+
+We may need them in printing ! check next point!
+
+**********************************************************************************
+
+4. Actually a whole story about printing =') !
+
+if we want to print a variable and a its value
+x = 5 (equivalent in C code is: printf("x = %d",x); to get what I mean)
+
+print 'x';			-> returns char
+print " = ";		-> gives parsing error, because = isn't recognized in the TEXT terminal in the lexer
+print x;			-> returns identifier
+
+Also printing a space isn't supported XD ! everything will be like spaghetti without spacing
+
+print "   " ;		-> gives parse error
+
+may need to add a new terminal if we want to print the special chararcters.
+**********************************************************************************
+
+5. function 
+
+bool f(int a, int b, int c)
+{
+	int x;
+	return (a+b+c);		-> parse error, because we return an identifier, we should return an expression. changed it to expression, and parsing is 								successfull 
+}
+
+however this gives a parse error:
+
+bool f(int a, int b, int c)
+{
+	return (a+b+c);		-> parse error, no match for stmlist. it is still a valid function that we should support i think :O 					
+}
+
+Solution that I tried:
+made a new non terminal funcstmt, and changed the func production as follow:
+
+func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE funcstmt RET expression SEMICOLON EBRACE   {printf("function\n");}
+	   ;
+	   
+funcstmt :    stmtlist 
+			| 
+	   		;
+	   		
+This solves the above problem, but not sure if it may cause a problem for anything else.
+
+**********************************************************************************
+
+
+6. just a reminder, we re not supporting this:
+++i;
+the increment before the identifer. i dont think it's very useful, we dont need to handle it, but just thought about mentionnig it if someone thinks otherwise
+
+**********************************************************************************
+
+7. Function continued
+
+
+bool f(int a, int b, int c)
+{
+	int d = foo();				-> gives a parse error: we dont differentiate between a function declaration with its implementtaion and its usage
+	return (a+b+c,d);			
+}
+
+function implementation should be done in parallel with our main code, not in it probably like this:
+func1()
+{
+
+}
+
+func2()
+{
+
+}
+
+
+As for the declaration: probbaly need to add a function declaration production: tried these: work for now; 
+
+also added funcDeclaration in expression produtcion, so that it can work for assignments
+
+funcDeclaration	: IDENTIFIER ORBRACKET funcDeclArgs
+				 ;
+	 
+funcDeclArgs:	IDENTIFIER contFuncDecl
+			 |	ERBRACKET
+			 ;	
+			 
+contFuncDecl:	  COMMA IDENTIFIER contFuncDecl 
+				| ERBRACKET
+				;	   
+
+***********************************************************************************
+
+8. Function continued
+
+bool f()						-> empty arguments aren't accepted XD ! 
+{
+	print Hello;			
+}
+
+A possible solution that fixes it: (Move the ERBRACKET with the arglist)
+		   		
+func : type IDENTIFIER ORBRACKET arglist OBRACE funcstmt RET expression SEMICOLON EBRACE      {printf("function\n");}
+	   ;
+   		
+arglist:  type IDENTIFIER cont
+		 |	ERBRACKET
+		 ;
+
+cont:  COMMA type IDENTIFIER cont 
+	| ERBRACKET
+	;	   
+	   
+
+
