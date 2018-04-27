@@ -5,6 +5,7 @@ const float num = 1.769;
 const int num2 = 1000000;
 const string welcome = "Compilers";
 const char wel = "C";
+char x = '?';
 
 int x = 0;
 x ++;
@@ -56,6 +57,8 @@ do 	{
 while	(a<0);
 
 print a;
+
+print "x = ?!*=*{ } < > ( @HELLO!#&%^~) 544";
 
 x = 0;
 
