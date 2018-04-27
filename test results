@@ -112,7 +112,8 @@ contFuncDecl:	  COMMA IDENTIFIER contFuncDecl
 
 bool f()						-> empty arguments aren't accepted XD ! 
 {
-	print Hello;			
+	print Hello;
+	return x;
 }
 
 A possible solution that fixes it: (Move the ERBRACKET with the arglist)
