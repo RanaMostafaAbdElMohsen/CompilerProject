@@ -64,10 +64,11 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 		
 		;
 
-func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE stmtlist RET  IDENTIFIER  SEMICOLON   EBRACE      {printf("function\n");}
+func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE stmtlist RET  expression  SEMICOLON   EBRACE      {printf("function\n");}
 	   ;
 	   
 arglist:  type IDENTIFIER cont
+          |
 	;
 
 cont:  COMMA type IDENTIFIER cont 
@@ -76,7 +77,7 @@ cont:  COMMA type IDENTIFIER cont
 	   
 		
 braceScope:	 OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
-			| OBRACE  EBRACE	
+			 | OBRACE EBRACE	
 		;
 
 switchScope:  OBRACE caseExpression EBRACE					    {printf("Case brace\n");}		
@@ -152,7 +153,7 @@ caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON
 		   ;
 
 %% 
- int yyerror(char *s) {     fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
+ int yyerror(char *s) {  int lineno=++yylineno;   fprintf(stderr, "line number : %d %s\n", lineno,s);     return 0; }
  
  int main(void) 
  {    yyin = fopen("input.txt", "r");
