@@ -2,31 +2,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include "structs.h"
+#include <math.h>
 
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int brace, bool init, char * name);
+nodeType * id(int index, int type, int brace, int init, char * name);
 nodeType * getId(char * name);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
-//int ex(nodeType *p);
+void ftoa(float n,char res[], int afterpoint);
+//int ex(nodeType *p) phase 2 semantic analyser;
 int yyerror(char *);
 int yylex(void);
 int yylineno;
 FILE * f1;
 FILE * yyin;
 
-int SymSize = 50;
+
 
 /* symbol table */
-int  symType[SymSize];
-char* symName[SymSize];
-char* symValue[SymSize];
-bool symInit[SymSize];
-bool symUsed[SymSize];
-int symBraces[SymSize];
+int  symType[50];
+char* symName[50];
+char* symValue[50];
+int symInit[50];
+int symUsed[50];
+int symBraces[50];
 
 int indexCount=0;
 int brace=0;
@@ -36,83 +39,86 @@ int brace=0;
     int iValue;                 /* integer value */
 	float fValue;               /* float Value */
     char * sValue;              /* string value */
-	char  cValue;               /* character value */
+	char * cValue;               /* character value */
 	char * id ;                 /* id value */
     nodeType *nPtr;             /* node pointer */
 };
 
-%token COMMA RET BREAK DEFAULT SWITCH END DO CASE OBRACE EBRACE ORBRACKET ERBRACKET OSBRACKET ESBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST  ASSIGN POWER FALSE TRUE BOOL
+%token COMMA RET BREAK DEFAULT SWITCH DO CASE OBRACE EBRACE ORBRACKET ERBRACKET SEMICOLON COLON INCREMENT DECREMENT PEQUAL MEQUAL MULEQUAL DIVEQUAL GREATER LESS GE LE EQ NE PLUS MINUS MUL DIV REM AND OR NOT WHILE FOR IF ELSE PRINT INT FLOAT DOUBLE LONG CHAR STRING CONST  ASSIGN POWER FALSE TRUE BOOL
 %token <iValue> INTEGERNUMBER 
 %token <fValue> FLOATNUMBER 
 %token <sValue> TEXT 
 %token <cValue> CHARACTER 
 %token <id>     IDENTIFIER
 
-
-
-%left ASSIGN
+%left ASSIGN 
+%left GREATER LESS GE LE EQ NE AND OR NOT
 %left PLUS MINUS 
 %left DIV MUL REM
 %left POWER
-%left GREATER LESS GE LE EQ NE
 %nonassoc IFX
 %nonassoc ELSE
+%nonassoc UMINUS
 
-
-%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration
+%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration DataTypes  increments switchScope
 %type <iValue> Type
 %type <iValue> Constant
+
 
 %%
 program	: 
 		function
 		;
 	
-function :      function stmt  
+function :      function stmt  {}
 		|
 		;
 		
-stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                 {$$=id(indexCount,$1,brace,0,$2);printf("Declaration\n");indexCount++;}
+stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$1,brace,0,$2);printf("Declaration\n");indexCount++;}
 
-		| IDENTIFIER ASSIGN expression SEMICOLON	          {$$ = opr(ASSIGN,2, getId($1), $3); printf("Assignment\n");}
+		| IDENTIFIER ASSIGN expression SEMICOLON	           {$$ = opr(ASSIGN,2, getId($1), $3); printf("Assignment\n");}
 
-		| Type IDENTIFIER ASSIGN expression	SEMICOLON	      {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
+		| Type IDENTIFIER ASSIGN expression	SEMICOLON	       {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
 
-		| Constant IDENTIFIER ASSIGN expression SEMICOLON    { $$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++;printf("Constant assignment\n");}
+		| Constant IDENTIFIER ASSIGN expression SEMICOLON      { $$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++;printf("Constant assignment\n");}
 
-        | forExpression SEMICOLON                             {$$=$1; printf("Increments\n");}
+		| increments SEMICOLON                                 {$$=$1; printf("Increments\n");}
 		
-		| WHILE ORBRACKET booleanExpressionAll ERBRACKET stmt	  {$$ = opr(WHILE,2, $3, $5); printf("While loop\n");}
+		| WHILE ORBRACKET expression ERBRACKET stmt	           {$$ = opr(WHILE,2, $3, $5); printf("While loop\n");}
 
-		| DO braceScope WHILE ORBRACKET booleanExpressionAll ERBRACKET SEMICOLON	{$$ = opr(DO,2, $2, $5);printf("Do while\n");}
+		| DO braceScope WHILE ORBRACKET expression ERBRACKET SEMICOLON	{$$ = opr(DO,2, $2, $5);printf("Do while\n");}
 
-		| FOR ORBRACKET INT IDENTIFIER ASSIGN no_declaration SEMICOLON 
-		  booleanExpression SEMICOLON 
+		| FOR ORBRACKET INT IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
+		  expression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											  {$$ = opr(FOR,5, $4, $6,$8,$10,$12); printf("For loop\n");}
+		  braceScope											   {char c[] = {}; itoa($6, c, 10);$$ = opr(FOR,4, opr(ASSIGN, 2, getId($4), con(c, 0)),$8,$10,$12); printf("For loop\n");}
 
 		
-		| IF ORBRACKET booleanExpressionAll ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
+		| IF ORBRACKET expression ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
 
-		| IF ORBRACKET booleanExpressionAll ERBRACKET braceScope	 ELSE braceScope	{$$ = opr(IF, 3, $3, $5, $7); printf("If-Elsestatement\n");}
+		| IF ORBRACKET expression ERBRACKET braceScope	 ELSE braceScope	{$$ = opr(IF, 3, $3, $5, $7); printf("If-Elsestatement\n");}
 
-		| SWITCH ORBRACKET IDENTIFIER ERBRACKET braceScope      {$$ = opr(SWITCH, 2, $3, $5);printf("Switch case\n");}
+		| SWITCH ORBRACKET IDENTIFIER ERBRACKET switchScope      {$$ = opr(SWITCH, 2, $3, $5);printf("Switch case\n");}
 
 		
-		| PRINT expression 	SEMICOLON	                        {$$ = opr(PRINT, 1, $2);printf("Print\n");}
+		| PRINT expression 	SEMICOLON	                         {$$ = opr(PRINT, 1, $2); printf("Print\n");}
 			                                            	
 
-		| braceScope											{$$=$1;printf("New braces scope\n");}
+		| braceScope											{$$=$1; printf("New braces scope\n");}
+		
 		;
 
-	   
+ 
 		
-braceScope:  OBRACE stmtlist EBRACE								{printf("Stmt brace\n");}
-			| OBRACE caseExpression EBRACE					    {printf("Case brace\n");}
-			;
+braceScope:	 OBRACE stmtlist EBRACE								{brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $2, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
+			| OBRACE  EBRACE	                                {brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
+		;
 
-stmtlist:  stmt 
-		   | stmtlist stmt ;
+switchScope:  OBRACE caseExpression EBRACE					     {brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $2, opr(EBRACE,0)); brace--;printf("case brace\n");}		
+		;
+		
+stmtlist:  stmt { $$ = $1; }
+          | stmtlist stmt { $$ = opr(SEMICOLON, 2, $1, $2); }  ;
 
 Type:   INT  {$$=0;}
 		| FLOAT{$$=1;}
@@ -128,57 +134,63 @@ Constant : CONST INT {$$=5;}
 		  | CONST BOOL {$$=9;}
 		  ;
 
-no_declaration:   FLOATNUMBER
-				| INTEGERNUMBER 
-				| IDENTIFIER 
-				| no_declaration PLUS	no_declaration 
-				| no_declaration MINUS no_declaration 
-				| no_declaration MUL no_declaration 
-				| no_declaration  DIV	no_declaration 
-				| no_declaration  REM	no_declaration 
-				| no_declaration  POWER	no_declaration 
-				| IDENTIFIER INCREMENT 
-				| IDENTIFIER DECREMENT 
-				| ORBRACKET no_declaration ERBRACKET ;
+no_declaration:   FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1); }              
+		| INTEGERNUMBER          { char c[] = {}; itoa($1, c, 10); $$ = con(c, 0); }             
+		| IDENTIFIER              { $$ = getId($1); }             
+		| no_declaration PLUS	no_declaration { $$ = opr(PLUS, 2, $1, $3); }
+		| no_declaration MINUS no_declaration  {$$= opr(MINUS,2,$1,$3);}
+		| no_declaration MUL no_declaration    {$$= opr(MUL, 2 ,$1,$3);}
+		| no_declaration  DIV	no_declaration {$$= opr(DIV, 2 ,$1,$3);}
+		| no_declaration  REM	no_declaration {$$= opr(REM, 2 ,$1,$3);}
+		| no_declaration  POWER	no_declaration  {$$= opr(POWER, 2 ,$1,$3);}
+		| MINUS no_declaration %prec UMINUS   { $$ = opr(UMINUS, 1, $2); } 
+		| IDENTIFIER INCREMENT                 {$$=opr(INCREMENT,1,$1);}
+		| IDENTIFIER DECREMENT                 {$$=opr(DECREMENT,1,$1);}
+		| ORBRACKET no_declaration ERBRACKET    {$$=$2;}    ;
 
-forExpression:   IDENTIFIER  INCREMENT 
-				 | IDENTIFIER DECREMENT
-				 | IDENTIFIER ASSIGN no_declaration  PLUS no_declaration 
-				 | IDENTIFIER ASSIGN no_declaration  MINUS no_declaration  
-				 | IDENTIFIER ASSIGN no_declaration  MUL no_declaration 
-				 | IDENTIFIER ASSIGN no_declaration  DIV no_declaration	
-				 | IDENTIFIER PEQUAL no_declaration 
-				 | IDENTIFIER MEQUAL no_declaration 
-				 | IDENTIFIER MULEQUAL no_declaration 
-				 | IDENTIFIER DIVEQUAL no_declaration 
-				 ;
+increments: IDENTIFIER  INCREMENT              		{$$=opr(INCREMENT,1,$1);}
+		 | IDENTIFIER DECREMENT                		{$$=opr(DECREMENT,1,$1);}
+		 | IDENTIFIER PEQUAL no_declaration    		{$$= opr(PEQUAL, 2 ,$1,$3);}
+		 | IDENTIFIER MEQUAL no_declaration    		{$$= opr(MEQUAL, 2 ,$1,$3);}
+		 | IDENTIFIER MULEQUAL no_declaration 		{$$= opr(MULEQUAL, 2 ,$1,$3);}
+		 | IDENTIFIER DIVEQUAL no_declaration  		{$$= opr(DIVEQUAL, 2 ,$1,$3);}
+		 ;
 
+
+forExpression : increments                 {$$=$1;}
+			   | IDENTIFIER ASSIGN no_declaration {$$ = opr(ASSIGN, 2, getId($1), $3);};
+		 
+booleanExpression: expression AND expression   { $$ = opr(AND, 2, $1, $3); }       
+			| expression OR expression         { $$ = opr(OR , 2, $1, $3); }     
+			| NOT expression 				   { $$ = opr(NOT, 1, $2); }                         
+			| DataTypes GREATER DataTypes  	   { $$ = opr(GREATER, 2, $1, $3); }		 
+			| DataTypes LESS DataTypes         { $$ = opr(LESS, 2, $1, $3); }      
+			| DataTypes GE DataTypes           { $$ = opr(GE, 2, $1, $3); }      
+			| DataTypes LE DataTypes           { $$ = opr(LE, 2, $1, $3); }      
+			| DataTypes NE DataTypes           { $$ = opr(NE, 2, $1, $3); }       
+			| DataTypes EQ DataTypes           { $$ = opr(EQ, 2, $1, $3); }      
+			| ORBRACKET booleanExpression ERBRACKET {  $$ = $2; }
+			;
+		
+
+		
 			
-booleanExpression: 	  FALSE 
-					| TRUE	
-					| booleanExpression AND booleanExpression 
-					| booleanExpression OR booleanExpression 
-					| NOT booleanExpression 
-					| no_declaration GREATER no_declaration 
-					| no_declaration LESS no_declaration 
-					| no_declaration GE no_declaration 
-					| no_declaration LE no_declaration
-					| expression NE expression 
-					| expression EQ expression ;
-					
-booleanExpressionAll: booleanExpression
-					| IDENTIFIER;
-					
+DataTypes:no_declaration {  $$ = $1; }
+		| CHARACTER { $$ = con($1, 2); }
+		| FALSE { $$ = con("false", 4); }
+	    | TRUE { $$ = con("true", 4); }
+		| TEXT { $$ = con($1, 3); };
+			
 
-expression: no_declaration
-			| CHARACTER 
-			| TEXT
-			| booleanExpression ;
+		      
 
-caseExpression: DEFAULT COLON stmtlist BREAK SEMICOLON                              
-			   | CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON   caseExpression  		
-			   ;
-			   
+expression:	DataTypes {  $$ = $1; }
+		| booleanExpression {  $$ = $1; } ;
+
+caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON           { $$ = opr(DEFAULT, 2, $3, opr(BREAK, 0)); }                                          
+	 	| CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON  caseExpression  { char c[] = {}; itoa($2, c, 10); $$ = opr(CASE, 4, con(c, 0), $4, opr(BREAK, 0), $7); }		
+		   ;
+
 
 %% 
 
@@ -196,23 +208,29 @@ nodeType *con(char* value, int type) {
     return p;
 }
 
-nodeType * id(int index, int type, int brace, bool init, char * name)
+nodeType * id(int index, int type, int brace, int  init, char * name)
 {
+
+	 nodeType *p;
+
+    /* allocate node */
+    if ((p = malloc(sizeof(nodeType))) == NULL)         
+		yyerror("out of memory");
+		
     // check if the name already exists in the symName table
-	for (int j=0; j<indexCount; j++)
+	int j=0;
+	for (j=0; j<indexCount; j++)
 	{
 		if (strcmp(name,symName[j]) == 0)
 		{
 			yyerror("Identifier Name already defined before\n");
 			// still need to check the braces ! 
+			indexCount--;
+			return p;
 		}
 	}
 
-    nodeType *p;
-
-    /* allocate node */
-    if (p = malloc( (sizeof(nodeType))) == NULL)
-        yyerror("out of memory");
+   
 
     /* copy information */
     p->type = typeId;
@@ -227,7 +245,7 @@ nodeType * id(int index, int type, int brace, bool init, char * name)
     symName[index] 	 = strdup(name);
     symType[index]   = type;
     symInit[index]	 = init;
-	symUsed[index]	 = false;
+	symUsed[index]	 = 0;
 	symBraces[index] = brace;
 	
     return p;
@@ -236,8 +254,8 @@ nodeType * id(int index, int type, int brace, bool init, char * name)
 nodeType * getId(char * name)
 {
 	int index;
-	
-	for (int j=0; j<indexCount; j++)
+	int j=0;
+	for ( j=0; j<indexCount; j++)
 	{
 		if (strcmp(name,symName[j]) == 0)
 		{
@@ -249,10 +267,10 @@ nodeType * getId(char * name)
 	nodeType *p;
 
     /* allocate node */
-    if (p = malloc( (sizeof(nodeType))) == NULL)
-        yyerror("out of memory");
+    if ((p = malloc(sizeof(nodeType))) == NULL)         
+		yyerror("out of memory");
 
-	symUsed[index]	 =  true;
+	symUsed[index]	 =  1;
 
     /* copy information */
     p->type = typeId;
@@ -297,6 +315,59 @@ void freeNode(nodeType *p) {
     free (p);
 }
 
+void reverse(char *str, int len) {
+	int i=0, j=len-1, temp;
+	while (i<j)
+	{
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+		i++; j--;
+	}
+}
+
+int toStr(int x, char str[], int d) {
+	int i = 0;
+	while (x)
+	{
+		str[i++] = (x%10) + '0';
+		x = x/10;
+	}
+ 
+	// If number of digits required is more, then
+	// add 0s at the beginning
+	while (i < d)
+		str[i++] = '0';
+ 
+	reverse(str, i);
+	str[i] = '\0';
+	return i;
+}
+
+void ftoa(float n, char res[], int afterpoint) {
+	
+	// Extract integer part
+	int ipart = (int)n;
+ 
+	// Extract floating part
+	float fpart = n - (float)ipart;
+	
+ 
+	// convert integer part to string
+	int i = toStr(ipart, res, 0);
+ 
+	// check for display option after point
+	if (afterpoint != 0)
+	{
+		res[i] = '.';  // add dot
+ 
+		// Get the value of fraction part upto given no.
+		// of points after dot. The third parameter is needed
+		// to handle cases like 233.007
+		fpart = fpart * pow(10, afterpoint);
+		toStr((int)fpart, res + i + 1, afterpoint);
+	}
+}
 
 int yyerror(char *s) {     fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
  

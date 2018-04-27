@@ -1,6 +1,6 @@
 typedef enum { typeCon, typeId, typeOpr } nodeEnum;
 typedef enum { Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} typeEnum;
-typedef enum { Accepted, Redefined, OutOfScope} permission;
+typedef enum { Accepted, undeclared, Constant, OutOfScope} permission;
 /* constants */
 typedef struct {
     typeEnum type;                  	/* type of constant */
@@ -32,11 +32,11 @@ typedef struct nodeTypeTag {
     };
 } nodeType;
 
-extern int SymSize;
-extern int  symType[SymSize];
-extern char* symName[SymSize];
-extern char* symValue[SymSize];
-extern bool symInit[SymSize];
-extern bool symUsed[SymSize];
-extern int symBraces[SymSize];
+
+extern int  symType[50];
+extern char* symName[50];
+extern char* symValue[50];
+extern int symInit[50];
+extern int symUsed[50];
+extern int symBraces[50];
 
