@@ -61,7 +61,7 @@
 
 [0-9]+                  {yylval = atoi(yytext); return INTEGERNUMBER;}
 [0-9]+\.[0-9]+          {yylval = atof(yytext); return FLOATNUMBER;}
-\"[\x23-\x7E]*\"     	{printf("Text returned\n"); return TEXT;}
+\"[\x23-\x7E =\?!\*]*\"     	{printf("Text returned\n"); return TEXT;}
 \'[\x23-\x7E]?\'        return CHARACTER;
 [a-zA-Z][_a-zA-Z0-9]*   {printf("Identifier returned\n"); return IDENTIFIER; }	
 [\t  ]+                /* ignore whitespace */;
