@@ -58,20 +58,37 @@ stmt:   type IDENTIFIER SEMICOLON	%prec IFX                 {printf("Declaration
 		
 		| PRINT expression 	SEMICOLON	                        {printf("Print\n");}
 		
-		| func	                                            	
+		| func	
 
 		| braceScope											{printf("New braces scope\n");}
 		
 		;
-
-func : type IDENTIFIER ORBRACKET arglist ERBRACKET OBRACE stmtlist RET  IDENTIFIER  SEMICOLON   EBRACE      {printf("function\n");}
+	
+	
+funcDeclaration	: IDENTIFIER ORBRACKET funcDeclArgs				{printf("Function Declaration\n");}
+				 ;
+	 
+funcDeclArgs:	IDENTIFIER contFuncDecl
+			 |	ERBRACKET
+			 ;	
+			 
+contFuncDecl:	  COMMA IDENTIFIER contFuncDecl 
+				| ERBRACKET
+				;	   			 		 
+		
+func : type IDENTIFIER ORBRACKET arglist OBRACE funcstmt RET expression SEMICOLON EBRACE      {printf("function\n");}
 	   ;
-	   
+
+funcstmt :    stmtlist 
+			| 
+	   		;
+	   			   		
 arglist:  type IDENTIFIER cont
-	;
+		 |	ERBRACKET
+		 ;
 
 cont:  COMMA type IDENTIFIER cont 
-	| 
+	| ERBRACKET
 	;	   
 	   
 		
@@ -83,7 +100,9 @@ switchScope:  OBRACE caseExpression EBRACE					    {printf("Case brace\n");}
 		;
 		
 stmtlist:  stmt 
-          | stmtlist stmt ;
+          | stmtlist stmt 
+          ;
+
 
 type:   INT
 	| FLOAT
@@ -136,26 +155,33 @@ booleanExpression: expression AND expression          { $$ = $1 && $3; }
 		
 			
 DataTypes:no_declaration
-		| CHARACTER
+		| CHARACTER			{printf("Char returned\n");}
 		| FALSE 
 	    | TRUE
 		| TEXT;
-			
-
-		      
+					      
 
 expression:	DataTypes
-		| booleanExpression ;
+		| booleanExpression 
+		| funcDeclaration
+		;
 
 caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON                              
 		| CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON   caseExpression  		
 		   ;
 
+//returnExpression:	  RET returnShiftReduceSolution
+				//	| RET  ORBRACKET expression ERBRACKET
+					//;
+
+//returnShiftReduceSolution	  ORBRACKET expression ERBRACKET
+	//						| expression
+
 %% 
  int yyerror(char *s) {     fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
  
  int main(void) 
- {    yyin = fopen("input.txt", "r");
+ {   // yyin = fopen("input.txt", "r");
 	f1=fopen("output.txt","w");
 	
    if(!yyparse())
