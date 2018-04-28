@@ -4,7 +4,7 @@ string todo;
 const float num = 1.769;
 const int num2 = 1000000;
 const string welcome = "Compilers";
-const char wel = "C";
+const char wel = 'C';
 char x = '?';
 
 int x = 0;
