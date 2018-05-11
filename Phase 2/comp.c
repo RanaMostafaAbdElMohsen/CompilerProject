@@ -8,10 +8,12 @@ static int lbl;
 int leftType;
 int rightType;
 int last = 0;
+int l=0;
 int counter = -1;
 int br = 0;
 int permit;
 char* oprType;
+int base;
 
 
 int ex(nodeType *p) {
@@ -31,6 +33,58 @@ int ex(nodeType *p) {
         break;
     case typeOpr:
         switch(p->opr.oper) {
+			
+		//*********************OBRACE***********************************************************************
+		case OBRACE:
+				br = atoi(p->opr.op[0]->con.value);
+				ex(p->opr.op[1]);
+				ex(p->opr.op[2]);		
+		break;	
+		//*********************EBRACE************************************************************************
+		case EBRACE:
+		;
+		int jj = 0;
+		for(jj = 0; jj < 50; jj++){
+			if(symName[jj] != NULL){
+				if(symBraces[jj] == br) {
+					symBraces[jj] = -5;
+				}
+			}
+		}
+		br--;
+		break;
+		
+		//*******************SWITCH**************************************************************************
+		case SWITCH:
+                    oprType = strdup("a");
+					ex(p->opr.op[0]);
+					base = last - 1;
+					ex(p->opr.op[1]);
+					l++;
+                    oprType = NULL;
+		break;
+		//*********************************Case*******************************************	
+		case CASE:
+					ex(p->opr.op[0]);
+					fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n", last, base, counter);
+					fprintf( f1, "\t jnz\tL%03d \n", lbl1 = lbl++); 
+					ex(p->opr.op[1]);
+					ex(p->opr.op[2]);
+					fprintf( f1, "L%03d:\n", lbl1);
+					ex(p->opr.op[3]);
+                    last++;
+                    counter++;
+        break;
+		//********************************Break********************************************			
+	    case BREAK:
+				  fprintf( f1, "\t jmp Label%01d \n", l);
+		break;
+	    //********************************Default*******************************************				
+		case DEFAULT:
+				ex(p->opr.op[0]);
+				fprintf( f1, "Label%01d: \n", l);
+		break;
+		//*********************WHILE*************************************************************************	
         case WHILE:
             fprintf(f1,"L%03d:\n", lbl1 = lbl++);
             ex(p->opr.op[0]);
@@ -39,6 +93,17 @@ int ex(nodeType *p) {
             fprintf(f1,"\tjmp\tL%03d\n", lbl1);
             fprintf(f1,"L%03d:\n", lbl2);
             break;
+			
+		//********************DO WHILE*****************************************************************************	
+			
+		 case DO:
+					fprintf( f1, "L%03d:\n", lbl1 = lbl++);
+					ex(p->opr.op[0]);
+                    ex(p->opr.op[1]);
+					fprintf( f1, "\t jnz\tL%03d\n", lbl1);
+		break;	
+			
+		//********************IF*****************************************************************************	
         case IF:
             ex(p->opr.op[0]);
             if (p->opr.nops > 2) {
@@ -56,10 +121,29 @@ int ex(nodeType *p) {
                 fprintf(f1,"L%03d:\n", lbl1);
             }
             break;
-        case PRINT:     
+			
+	//********************************PRINT*******************************************************	
+       case PRINT:     
             ex(p->opr.op[0]);
-            printf("\tprint\n");
+			fprintf( f1, "\t print R%01d\n",last-1);
+			oprType = NULL;
             break;
+			
+	//*********************************FOR**********************************************************
+     case FOR:
+		ex(p->opr.op[0]);
+        fprintf( f1, "L%03d:\n", lbl1 = lbl++);
+		ex(p->opr.op[1]);
+		fprintf( f1, "\t jnz\tL%03d\n", lbl2 = lbl++);
+		ex(p->opr.op[3]);
+		ex(p->opr.op[2]);
+		fprintf( f1, "\t jmp\tL%03d\n", lbl1);
+		fprintf( f1, "L%03d:\n", lbl2); 
+		oprType = NULL;
+	 
+			
+	break;
+	 //***********************************ASSIGN*******************************************************		
        case ASSIGN:
 					leftType = p->opr.op[0]->id.type;
 					oprType = strdup("a");
@@ -90,7 +174,7 @@ int ex(nodeType *p) {
                     
 					}
 
-					if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float || rightType == Char || rightType == ConstFloat || rightType == ConstChar)) {;}
+					if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
 					else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
 					else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
 					else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
@@ -108,17 +192,24 @@ int ex(nodeType *p) {
                     leftType = -9;
                     rightType = -9;
 					break;
+					
+		//****************************************UMINUS******************************			
         case UMINUS:    
             ex(p->opr.op[0]);
-            printf("\tneg\n");
+            fprintf(f1, "\t neg R%01d, R%01d \n", last, counter);
+			last++;
+			counter++;
             break;
+			
+	   //******************************************DEFAULT******************************		
         default:
+			oprType = strdup("a");
             ex(p->opr.op[0]);
 			i=counter;
             ex(p->opr.op[1]);
 			j=counter;
             switch(p->opr.oper) {
-            case PLUS:
+						    case PLUS:
 							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
 								fprintf( f1, "\t add R%01d, R%01d, R%01d \n", last, i, j);
 								last ++;
@@ -225,7 +316,7 @@ int ex(nodeType *p) {
 						case OR:
 							
 							
-							f((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
 								fprintf( f1, "\t or R%01d, R%01d, R%01d \n", last, i, j);
 								last ++;
 								counter++;
@@ -286,7 +377,7 @@ int ex(nodeType *p) {
 							break;
 						case NE:
 							rightType = Bool;
-							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat){}
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){}
 							else if((type1 == Char || type1 == ConstChar) && (type2 == Char || type2 == ConstChar)){}
 							else if((type1 == String || type1 == ConstString) && (type2 == String || type2 == ConstString)){}
 							else if((type1 == Bool || type1 == ConstBool ) && (type2 == Bool || type2 ==ConstBool)){}
