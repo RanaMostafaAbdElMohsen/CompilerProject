@@ -1,6 +1,7 @@
 typedef enum { typeCon, typeId, typeOpr } nodeEnum;
 typedef enum { Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} typeEnum;
 typedef enum { Accepted, undeclared, Constant, OutOfScope} permission;
+
 /* constants */
 typedef struct {
     typeEnum type;                  	/* type of constant */
@@ -9,10 +10,10 @@ typedef struct {
 
 /* identifiers */
 typedef struct {
-    int index;          				/* subscript to sym table  and brace table*/
-	typeEnum type; 						/* type */
-	permission per;
-	char * name;
+    int         index;          				/* subscript to sym table  and brace table*/
+	typeEnum    type; 						/* type */
+	permission  per;
+	char *      name;
 } idNodeType;
 
 /* operators */
@@ -33,11 +34,13 @@ typedef struct nodeTypeTag {
 } nodeType;
 
 
-extern int  symType[50];
-extern char* symName[50];
-extern char* symValue[50];
-extern int symInit[50];
-extern int symUsed[50];
-extern int symBraces[50];
+extern int          symType[50];
+extern char*        symName[50];
+extern char*        symValue[50];
+extern int          symInit[50];
+extern int          symUsed[50];
+extern int          symBraces[50];
+extern permission   symPerm[50];
 extern FILE* f1;
-
+extern int yyerror(char *);
+extern int yyerrorvar(char *s, char *var);
