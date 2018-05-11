@@ -5,8 +5,6 @@
 #include <string.h>
 #include "structs.h"
 #include <math.h>
-
-
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
 nodeType * id(int index, int type, int brace, permission perm, char * name);
@@ -14,16 +12,13 @@ nodeType * getId(char * name, int brace);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
 void ftoa(float n,char res[], int afterpoint);
-int ex(nodeType *p); // phase 2 semantic analyser;
+int ex(nodeType *p) ;//phase 2 semantic analyser;
 int yyerror(char *);
 int yyerrorvar(char *s, char *var);
 int yylex(void);
 int yylineno;
 FILE * f1;
 FILE * yyin;
-
-
-
 /* symbol table */
 int  symType[50];
 char* symName[50];
@@ -31,11 +26,9 @@ char* symValue[50];
 int symInit[50];
 int symUsed[50];
 int symBraces[50];
-permission symPerm[50]; 
-
+permission   symPerm[50];
 int indexCount=0;
 int brace=0;
-
 %}
 %union {
     int iValue;                 /* integer value */
@@ -393,13 +386,17 @@ void ftoa(float n, char res[], int afterpoint) {
 	}
 }
 
-int yyerror(char *s) {  f1=fopen("output.txt","w");   fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
+int yyerror(char *s) { fclose(f1); remove("output.txt"); f1=fopen("output.txt","w"); fprintf(f1, "Syntax Error Could not parse quadruples\n"); fprintf(stderr, "line number : %d %s\n", yylineno,s);    exit(0); }
  
 int yyerrorvar(char *s, char *var) 
 {
+	fclose(f1);
+	int x= remove("output.txt");
+	printf("%d",x);
 	f1=fopen("output.txt","w");
- 	fprintf(stderr, "line number: %d %s : %s\n", yylineno,s,var);
- 	return 0;
+	fprintf(f1, "Syntax Error Could not parse quadruples\n");
+ 	fprintf(f1, "line number: %d %s : %s\n", yylineno,s,var);
+ 	exit(0);
 }
 
 int main(void) 
