@@ -56,7 +56,15 @@ int ex(nodeType *p) {
 				
 	break;
     case typeId: 
-        last++;
+        if (oprType != "a")
+    	{
+       		fprintf(f1,"mov %s,NULL \n",p->id.name);
+    	}
+    	else
+    	{	
+    		rightType = p->id.type;
+    	}
+		last++;
 		counter++;
         break;
     case typeOpr:
