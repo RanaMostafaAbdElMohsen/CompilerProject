@@ -27,6 +27,34 @@ int ex(nodeType *p) {
     switch(p->type) {
     case typeCon: 
         printf("\tpush\t%d\n", p->con.value); 
+		
+		//{ Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} 
+		rightType = p->con.type;
+		if(
+			( leftType == 5 && ( rightType != 5 || rightType != 0 )) || 											//integer
+			( leftType == 6 && ( rightType != 6 || rightType != 1 || rightType != 5 || rightType != 0 )) || 		//float
+			( leftType == 7 && ( rightType != 7 || rightType != 2 )) || 											//char
+			( leftType == 8 && ( rightType != 8 || rightType != 3 || rightType != 7 || rightType != 2 )) || 		//string
+			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
+		)
+		{
+			fprintf( f1, " Error in type %s \n", p->con.type);
+			break;
+		}
+		
+		if (leftType == 9 )
+		{
+			if (atoi(p->con->value) != 0 || atoi(p->con->value) != 1)
+			{
+				fprintf( f1," Error in type %s \n", p->con.type);
+				break;
+			}
+		}
+		
+		fprintf( f1, "\t mov %s, R%01d \n", p->con->value, last - 1);
+		last ++;
+		counter ++;
+				
         break;
     case typeId: 
         printf("\tpush\t%c\n", p->id.index + 'a'); 
