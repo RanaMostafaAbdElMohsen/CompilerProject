@@ -26,7 +26,6 @@ int ex(nodeType *p) {
     if (!p) return 0;
     switch(p->type) {
     case typeCon: 
-        printf("\tpush\t%d\n", p->con.value); 
 		
 		//{ Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} 
 		rightType = p->con.type;
@@ -44,20 +43,21 @@ int ex(nodeType *p) {
 		
 		if (leftType == 9 )
 		{
-			if (atoi(p->con->value) != 0 || atoi(p->con->value) != 1)
+			if (atoi(p->con.value) != 0 || atoi(p->con.value) != 1)
 			{
 				fprintf( f1," Error in type %s \n", p->con.type);
 				break;
 			}
 		}
 		
-		fprintf( f1, "\t mov %s, R%01d \n", p->con->value, last - 1);
+		fprintf( f1, "\t mov R%01d, %s \n", last,p->con.value);
 		last ++;
 		counter ++;
 				
-        break;
+	break;
     case typeId: 
-        printf("\tpush\t%c\n", p->id.index + 'a'); 
+        last++;
+		counter++;
         break;
     case typeOpr:
         switch(p->opr.oper) {
@@ -214,8 +214,8 @@ int ex(nodeType *p) {
 					}
 					
 					fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
-					last = 0;
-					counter = -1;
+					last =0;
+					counter =-1;
                     oprType = NULL;
                     leftType = -9;
                     rightType = -9;
