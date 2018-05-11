@@ -386,7 +386,13 @@ void ftoa(float n, char res[], int afterpoint) {
 	}
 }
 
-int yyerror(char *s) { fclose(f1); remove("output.txt"); f1=fopen("output.txt","w"); fprintf(f1, "Syntax Error Could not parse quadruples\n"); fprintf(stderr, "line number : %d %s\n", yylineno,s);    exit(0); }
+int yyerror(char *s) { 
+ fclose(f1);
+ remove("output.txt"); 
+ f1=fopen("output.txt","w");
+ fprintf(f1, "Syntax Error Could not parse quadruples\n"); fprintf(stderr, "line number : %d %s\n", yylineno,s);    
+ exit(0);
+}
  
 int yyerrorvar(char *s, char *var) 
 {
