@@ -14,7 +14,7 @@ nodeType * getId(char * name);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
 void ftoa(float n,char res[], int afterpoint);
-//int ex(nodeType *p) phase 2 semantic analyser;
+int ex(nodeType *p) ;//phase 2 semantic analyser;
 int yyerror(char *);
 int yylex(void);
 int yylineno;
@@ -70,7 +70,7 @@ program	:
 		function
 		;
 	
-function :      function stmt  {}
+function :      function stmt  {ex($2); freeNode($2);}
 		|
 		;
 		
@@ -373,12 +373,11 @@ int yyerror(char *s) {     fprintf(stderr, "line number : %d %s\n", yylineno,s);
  
 int main(void) 
 {    yyin = fopen("input.txt", "r");
-	f1=fopen("output.txt","w");
+	 f1=fopen("output.txt","w");
 	
    if(!yyparse())
 	{
 		printf("\nParsing complete\n");
-		fprintf(f1,"hello there");
 	}
 	else
 	{
