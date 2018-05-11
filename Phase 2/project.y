@@ -14,7 +14,7 @@ nodeType * getId(char * name, int brace);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
 void ftoa(float n,char res[], int afterpoint);
-int ex(nodeType *p) phase 2 semantic analyser;
+int ex(nodeType *p); // phase 2 semantic analyser;
 int yyerror(char *);
 int yyerrorvar(char *s, char *var);
 int yylex(void);
@@ -31,6 +31,7 @@ char* symValue[50];
 int symInit[50];
 int symUsed[50];
 int symBraces[50];
+permission symPerm[50]; 
 
 int indexCount=0;
 int brace=0;
