@@ -90,11 +90,11 @@ int ex(nodeType *p) {
                     
 					}
 
-					if((leftType == Integer || leftType == ConstIntger) && (rightType == 0 || rightType == 5 || rightType == 1 || rightType == 2 || rightType == 6 || rightType == 7)) {;}
-					else if((leftType == 1 || leftType == 6) && (rightType == 1 || rightType == 6 || rightType == 0 || rightType == 5)) {;}
-					else if((leftType == 2 || leftType == 7) && (rightType == 2 || rightType == 7 || rightType == 0 || rightType == 5)) {;}
-					else if((leftType == 3 || leftType == 8) && (rightType == 3 || rightType == 8)) {;}
-					else if((leftType == 4 || leftType == 9) && (rightType == 4 || rightType == 9)) {;}
+					if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float || rightType == Char || rightType == ConstFloat || rightType == ConstChar)) {;}
+					else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
+					else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
+					else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
+					else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool)) {;}
 					else if(leftType != rightType) {
 						fprintf( f1, "Error: incompatible types for assignment \n");
 						oprType = NULL;
@@ -119,7 +119,7 @@ int ex(nodeType *p) {
 			j=counter;
             switch(p->opr.oper) {
             case PLUS:
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)) {
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
 								fprintf( f1, "\t add R%01d, R%01d, R%01d \n", last, i, j);
 								last ++;
 								counter++;
@@ -131,7 +131,7 @@ int ex(nodeType *p) {
 							break;
 							
 						case MINUS:
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)) {
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
 								fprintf( f1, "\t sub R%01d, R%01d, R%01d \n", last, i, j);
 								last ++;
 								counter++;
@@ -143,7 +143,7 @@ int ex(nodeType *p) {
 							break;
 							
 						case MUL:
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)) {
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 ==  Float || type2 == ConstIntger || type2 == ConstFloat)) {
 								fprintf( f1, "\t mul R%01d, R%01d, R%01d \n", last, i, j);
 								last ++;
 								counter++;
@@ -156,34 +156,89 @@ int ex(nodeType *p) {
 							
 						case DIV:
 							
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t div R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for division \n");
+							}
+                            oprType = NULL;
 							break;
                             
 
                             
                         case REM:
                             
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t rem R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for reminader  operation \n");
+							}
+                            oprType = NULL;
 							break;
 
                         case POWER:
-                            
+                            if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t power R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for power operation\n");
+							}
+                            oprType = NULL;
 							break;
                             
 								
 						case NOT:
 							
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) ) {
+								fprintf( f1, "\t not R%01d \n", last-1);
+								last ++;
+								
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for not \n");
+							}
+                            oprType = NULL;
+							
 							break;
 							
 						case AND:
 							
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t and R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for && \n");
+							}
+                            oprType = NULL;
 							break;
 							
 						case OR:
 							
+							
+							f((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t or R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for || \n");
+							}
+                            oprType = NULL;
 							break;
 						
 						case GREATER:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){
+							rightType = Bool;
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
 								fprintf( f1, "\t compGREATER R%01d, R%01d, R%01d \n",last, i, j);
 								last ++;
 								counter++;
@@ -194,8 +249,8 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case LESS:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){
+							rightType = Bool;
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
 								fprintf( f1, "\t compLESS R%01d, R%01d, R%01d \n",last, i, j);
 								last ++;
 								counter++;
@@ -206,8 +261,8 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case GE:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){
+							rightType = Bool;
+							if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
 								fprintf( f1, "\t compGE R%01d, R%01d, R%01d \n",last, i, j);
 								last ++;
 								counter++;
@@ -218,8 +273,8 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case LE:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){
+							rightType = Bool;
+							if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
 								fprintf( f1, "\t compLE R%01d, R%01d, R%01d \n",last, i, j);
 								last ++;
 								counter++;
@@ -230,11 +285,11 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case NE:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){}
-							else if((type1 == 2 || type1 == 7) && (type2 == 2 || type2 == 7)){}
-							else if((type1 == 3 || type1 == 8) && (type2 == 3 || type2 == 8)){}
-							else if((type1 == 4 || type1 == 9 ) && (type2 == 4 || type2 == 9)){}
+							rightType = Bool;
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat){}
+							else if((type1 == Char || type1 == ConstChar) && (type2 == Char || type2 == ConstChar)){}
+							else if((type1 == String || type1 == ConstString) && (type2 == String || type2 == ConstString)){}
+							else if((type1 == Bool || type1 == ConstBool ) && (type2 == Bool || type2 ==ConstBool)){}
 							else {
 								fprintf( f1, "Error: incompatible operands for != \n");
                                 oprType = NULL;
@@ -246,11 +301,11 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case EQ:
-							rightType = 4;
-							if((type1 == 0 || type1 == 1 || type1 == 5 || type1 == 6) && (type2 == 0 || type2 == 1 || type2 == 5 || type2 == 6)){}
-							else if((type1 == 2 || type1 == 7) && (type2 == 2 || type2 == 7)){}
-							else if((type1 == 3 || type1 == 8) && (type2 == 3 || type2 == 8)){}
-							else if((type1 == 4 || type1 == 9 ) && (type2 == 4 || type2 == 9)){}
+							rightType = Bool;
+							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){}
+							else if((type1 == Char || type1 == ConstChar) && (type2 == Char || type2 == ConstChar)){}
+							else if((type1 == String || type1 == ConstString) && (type2 == String || type2 == ConstString)){}
+							else if((type1 == Bool || type1 == ConstBool ) && (type2 == Bool || type2 ==ConstBool)){}
 							else {
 								fprintf( f1, "Error: incompatible operands for == \n");
 								oprType = NULL;
@@ -263,7 +318,7 @@ int ex(nodeType *p) {
 							break;
 						case INCREMENT:
 							
-							if(type1 == 0 || type1 == 1) {
+							if(type1 == Integer || type1 == Float) {
 								fprintf( f1, "\t inc R%01d \n", last-1);
 								fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 							}
@@ -273,7 +328,7 @@ int ex(nodeType *p) {
                             oprType = NULL;
 							break;
 						case DECREMENT:
-							if(type1 == 0 || type1 == 1) {
+							if(type1 == Integer || type1 == Float) {
 								fprintf( f1, "\t dec R%01d \n", last-1);
 								fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 							}
@@ -284,15 +339,47 @@ int ex(nodeType *p) {
 							break;							
 						case PEQUAL:
 							
+							if((type1 == Integer || type1 == Float ) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t add R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for += \n");
+							}
+                            oprType = NULL;
 							break;
+							
 						case MEQUAL:
 							
+							if((type1 == Integer || type1 == Float ) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t sub R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for -= \n");
+							}
 							break;
 						case MULEQUAL:
-							
+							if((type1 == Integer || type1 == Float ) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t mul R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for *= \n");
+							}
 							break;
 						case DIVEQUAL:
-							
+							if((type1 == Integer || type1 == Float ) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
+								fprintf( f1, "\t div R%01d, R%01d, R%01d \n", last, i, j);
+								last ++;
+								counter++;
+							}
+							else {
+								fprintf( f1, "Error: incompatible operands for /= \n");
+							}
 							break;
                     
 					}
