@@ -39,4 +39,5 @@ extern char* symValue[50];
 extern int symInit[50];
 extern int symUsed[50];
 extern int symBraces[50];
+extern FILE* f1;
 
