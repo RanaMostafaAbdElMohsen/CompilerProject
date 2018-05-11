@@ -72,8 +72,7 @@ function : function stmt  {ex($2); freeNode($2);}
 stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$1,brace,Accepted,$2);printf("Declaration\n");indexCount++;}
 
 		| IDENTIFIER ASSIGN expression SEMICOLON	           {$$ = opr(ASSIGN,2, getId($1,brace), $3); printf("Assignment\n");}	
-		
-		// what if the identifier isnt even defined before ? we wont find it in the symbol table
+	
 
 		| Type IDENTIFIER ASSIGN expression	SEMICOLON	       {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,Accepted,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
 

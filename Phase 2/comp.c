@@ -26,7 +26,6 @@ int ex(nodeType *p) {
     if (!p) return 0;
     switch(p->type) {
     case typeCon: 
-		
 		//{ Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} 
 		rightType = p->con.type;
 		if(
@@ -56,15 +55,17 @@ int ex(nodeType *p) {
 				
 	break;
     case typeId: 
-        if (oprType != "a")
-    	{
-       		fprintf(f1,"mov %s,NULL \n",p->id.name);
-    	}
-    	else
+	  
+    	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
     		rightType = p->id.type;
+		}
+		else 
+    	{
+       		fprintf(f1,"\t mov %s,NULL \n",p->id.name);
     	}
-		last++;
+		
+        last++;
 		counter++;
         break;
     case typeOpr:
@@ -183,7 +184,6 @@ int ex(nodeType *p) {
        case ASSIGN:
 					leftType = p->opr.op[0]->id.type;
 					oprType = strdup("a");
-					
 					permit = p->opr.op[0]->id.per;
 					if(permit == undeclared) {
 						fprintf( f1, "Error: %s is not declared \n", p->opr.op[0]->id.name);

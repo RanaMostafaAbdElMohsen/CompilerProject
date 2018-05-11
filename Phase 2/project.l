@@ -1,8 +1,10 @@
 %{   
 	 #include <stdlib.h>
 	 #include <stdio.h>
-     int yyerror(char *); 
+     int yyerror(char *);
+	 #include "structs.h"
 	 #include "y.tab.h" 
+	 #include <string.h>
 	  int yylineno;
 %} 
 
@@ -11,8 +13,6 @@
 \}                      return EBRACE;
 \(						return ORBRACKET;
 \)						return ERBRACKET;
-\[						return OSBRACKET;
-\]						return ESBRACKET;
 ;                       return SEMICOLON;
 :                       return COLON; 
 ,                       return COMMA;
@@ -55,7 +55,6 @@
 "break"                 return BREAK;
 "switch"                return SWITCH;
 "case"                  return CASE;
-"end"                   return END;
 "false"					return FALSE;
 "true"					return TRUE;
 "default"               return DEFAULT;
@@ -71,15 +70,15 @@
 						  return FLOATNUMBER;
 						}
 \"[\x23-\x7E]*\"     	{
-						  yylval.sValue=stdrup(yytext);
+						  yylval.sValue=strdup(yytext);
 						  return TEXT;
 						}
 \'[\x23-\x7E]?\'        {
-						  yylval.cValue=stdrup(yytext);
+						  yylval.cValue=strdup(yytext);
 						  return CHARACTER;
 						}
 [a-zA-Z][_a-zA-Z0-9]*   {
-						  yylval.id=stdrup(yytext);
+						  yylval.id=strdup(yytext);
 						  return IDENTIFIER;
 						}
 [\t  ]+                /* ignore whitespace */;
