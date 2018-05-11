@@ -9,13 +9,14 @@
 
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
-nodeType * id(int index, int type, int brace, int init, char * name);
-nodeType * getId(char * name);
+nodeType * id(int index, int type, int brace, permission perm, char * name);
+nodeType * getId(char * name, int brace);
 nodeType * con(char* value, int type);
 void freeNode(nodeType *p);
 void ftoa(float n,char res[], int afterpoint);
-int ex(nodeType *p) ;//phase 2 semantic analyser;
+int ex(nodeType *p) phase 2 semantic analyser;
 int yyerror(char *);
+int yyerrorvar(char *s, char *var);
 int yylex(void);
 int yylineno;
 FILE * f1;
@@ -70,17 +71,19 @@ program	:
 		function
 		;
 	
-function :      function stmt  {ex($2); freeNode($2);}
+function : function stmt  {ex($2); freeNode($2);}
 		|
 		;
 		
-stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$1,brace,0,$2);printf("Declaration\n");indexCount++;}
+stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$1,brace,Accepted,$2);printf("Declaration\n");indexCount++;}
 
-		| IDENTIFIER ASSIGN expression SEMICOLON	           {$$ = opr(ASSIGN,2, getId($1), $3); printf("Assignment\n");}
+		| IDENTIFIER ASSIGN expression SEMICOLON	           {$$ = opr(ASSIGN,2, getId($1,brace), $3); printf("Assignment\n");}	
+		
+		// what if the identifier isnt even defined before ? we wont find it in the symbol table
 
-		| Type IDENTIFIER ASSIGN expression	SEMICOLON	       {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
+		| Type IDENTIFIER ASSIGN expression	SEMICOLON	       {$$ = opr(ASSIGN,2, id(indexCount,$1,brace,Accepted,$2), $4); indexCount++; printf("Declaration and Assignment\n");}
 
-		| Constant IDENTIFIER ASSIGN expression SEMICOLON      { $$ = opr(ASSIGN,2, id(indexCount,$1,brace,0,$2), $4); indexCount++;printf("Constant assignment\n");}
+		| Constant IDENTIFIER ASSIGN expression SEMICOLON      { $$ = opr(ASSIGN,2, id(indexCount,$1,brace,Constant,$2), $4); indexCount++;printf("Constant assignment\n");}
 
 		| increments SEMICOLON                                 {$$=$1; printf("Increments\n");}
 		
@@ -91,7 +94,7 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 		| FOR ORBRACKET INT IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
 		  expression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											   {char c[] = {}; itoa($6, c, 10);$$ = opr(FOR,4, opr(ASSIGN, 2, getId($4), con(c, 0)),$8,$10,$12); printf("For loop\n");}
+		  braceScope											   {char c[] = {}; itoa($6, c, 10);$$ = opr(FOR,4, opr(ASSIGN, 2, getId($4,brace), con(c, 0)),$8,$10,$12); printf("For loop\n");}
 
 		
 		| IF ORBRACKET expression ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
@@ -136,7 +139,7 @@ Constant : CONST INT {$$=5;}
 
 no_declaration:   FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1); }              
 		| INTEGERNUMBER          { char c[] = {}; itoa($1, c, 10); $$ = con(c, 0); }             
-		| IDENTIFIER              { $$ = getId($1); }             
+		| IDENTIFIER              { $$ = getId($1,brace); }             
 		| no_declaration PLUS	no_declaration { $$ = opr(PLUS, 2, $1, $3); }
 		| no_declaration MINUS no_declaration  {$$= opr(MINUS,2,$1,$3);}
 		| no_declaration MUL no_declaration    {$$= opr(MUL, 2 ,$1,$3);}
@@ -158,7 +161,7 @@ increments: IDENTIFIER  INCREMENT              		{$$=opr(INCREMENT,1,$1);}
 
 
 forExpression : increments                 {$$=$1;}
-			   | IDENTIFIER ASSIGN no_declaration {$$ = opr(ASSIGN, 2, getId($1), $3);};
+			   | IDENTIFIER ASSIGN no_declaration {$$ = opr(ASSIGN, 2, getId($1,brace), $3);};
 		 
 booleanExpression: expression AND expression   { $$ = opr(AND, 2, $1, $3); }       
 			| expression OR expression         { $$ = opr(OR , 2, $1, $3); }     
@@ -208,7 +211,7 @@ nodeType *con(char* value, int type) {
     return p;
 }
 
-nodeType * id(int index, int type, int brace, int  init, char * name)
+nodeType * id(int index, int type, int brace, permission  perm, char * name)
 {
 
 	 nodeType *p;
@@ -216,74 +219,94 @@ nodeType * id(int index, int type, int brace, int  init, char * name)
     /* allocate node */
     if ((p = malloc(sizeof(nodeType))) == NULL)         
 		yyerror("out of memory");
-		
+	
     // check if the name already exists in the symName table
 	int j=0;
 	for (j=0; j<indexCount; j++)
 	{
 		if (strcmp(name,symName[j]) == 0)
 		{
-			yyerror("Identifier Name already defined before\n");
-			// still need to check the braces ! 
-			indexCount--;
-			return p;
+			// is it in the same brace ?
+			if (symBraces[j] == brace)
+			{
+				yyerrorvar("Identifier name already defined before in this scope",name);
+			}
 		}
 	}
 
-   
-
     /* copy information */
     p->type = typeId;
-    
     p->id.index = index;
+    
+    // dont need these - get them directly from sym table -- leave them for Rana
     p->id.type 	= type;
-    p->id.per 	= 0;
+    p->id.per 	= perm;
     p->id.name 	= strdup(name);
   
-    
     // insert into symbol table
     symName[index] 	 = strdup(name);
     symType[index]   = type;
-    symInit[index]	 = init;
+    symInit[index]	 = 0;
 	symUsed[index]	 = 0;
 	symBraces[index] = brace;
+	symPerm[index]	 = perm;
 	
     return p;
 }
 
-nodeType * getId(char * name)
+nodeType * getId(char * name, int brace)
 {
 	int index;
 	int j=0;
-	for ( j=0; j<indexCount; j++)
+	int flagFound = 0;
+
+	// searching for the identifier's name in the Symbol Table
+	// Variable found must be in a valid brace scope (!= -5)
+
+	for (j=0; j<indexCount; j++)
 	{
-		if (strcmp(name,symName[j]) == 0)
+		if (strcmp(name,symName[j]) == 0 && symBraces[j] != -5 )
 		{
-			index = j;
-			break;
+			if (symBraces[j] == brace)
+			{
+				flagFound = 1;
+				index = j;
+				break;
+			}
+			else
+			{
+				// possible declaration was made in a previous valid brace
+				flagFound = 1;
+				index = j;
+			}
 		}
 	}
 	
-	nodeType *p;
+	if (flagFound == 0)
+	{
+		yyerrorvar("Undeclared Variable",strdup(name));
+	}
+	else
+	{
+		nodeType *p;
 
-    /* allocate node */
-    if ((p = malloc(sizeof(nodeType))) == NULL)         
-		yyerror("out of memory");
+	    /* allocate node */
+	    if ((p = malloc(sizeof(nodeType))) == NULL)         
+			yyerror("out of memory");
 
-	symUsed[index]	 =  1;
+	    /* copy information */
+	    p->type = typeId;
+	    
+	    p->id.index = index;
+	    p->id.type 	= symType[index];
+	    p->id.per 	= symPerm[index];
+	    p->id.name 	= strdup(symName[index]);
 
-    /* copy information */
-    p->type = typeId;
-    
-    p->id.index = index;
-    p->id.type 	= symType[index];
-    p->id.per 	= 0;							// may need to be changed
-    p->id.name 	= strdup(symName[index]);
-  
-    
-    return p;
+	    return p;
+	}
 	
 }
+
 nodeType *opr(int oper, int nops, ...) {
     va_list ap;
     nodeType *p;
@@ -369,11 +392,18 @@ void ftoa(float n, char res[], int afterpoint) {
 	}
 }
 
-int yyerror(char *s) {     fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
+int yyerror(char *s) {  f1=fopen("output.txt","w");   fprintf(stderr, "line number : %d %s\n", yylineno,s);     return 0; }
  
+int yyerrorvar(char *s, char *var) 
+{
+	f1=fopen("output.txt","w");
+ 	fprintf(stderr, "line number: %d %s : %s\n", yylineno,s,var);
+ 	return 0;
+}
+
 int main(void) 
 {    yyin = fopen("input.txt", "r");
-	 f1=fopen("output.txt","w");
+	f1=fopen("output.txt","w");
 	
    if(!yyparse())
 	{
