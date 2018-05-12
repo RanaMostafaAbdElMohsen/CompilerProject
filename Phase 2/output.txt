@@ -115,6 +115,10 @@ L004:
 	 mov x, R5 
 	jmp	L004
 L005:
+	 mov R0, 999 
+	 mov R1,i3 
+	 add R2, R0, R1 
+	 mov i5, R2 
 	 mov R0,x 
 	 mov R1, 1 
 	 JEQ R2, R0, R1 

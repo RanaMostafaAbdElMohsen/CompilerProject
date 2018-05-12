@@ -1,6 +1,7 @@
 Initialized Identifiers :- 
 y of type Integer 
 x of type Integer 
+i5 of type Integer 
 flag of type Bool 
 i of type Integer 
 d of type Integer 
@@ -44,12 +45,14 @@ a of type Integer
 try of type Float
 y of type Integer
 x of type Integer
+i3 of type ConstIntger
 c2 of type Char
 i2 of type Integer
 
 Unused Identifiers :-
 y of type Integer 
 x of type Integer 
+i5 of type Integer 
 flag of type Bool 
 tewsy of type Float 
 testing of type Float 
@@ -60,7 +63,6 @@ b3 of type ConstBool
 s3 of type ConstString 
 c3 of type ConstChar 
 f3 of type ConstFloat 
-i3 of type ConstIntger 
 b2 of type Bool 
 s2 of type String 
 f2 of type Float 

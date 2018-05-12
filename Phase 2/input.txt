@@ -58,6 +58,8 @@ while(x)
 	x=x*2;
 }
 
+int i5 = 999 + i3;
+
 switch(x)
 
 {

@@ -69,8 +69,7 @@ int ex(nodeType *p) {
 				
 	break;
     case typeId: 
-	   
-		   
+	   		   
 		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
@@ -225,7 +224,7 @@ int ex(nodeType *p) {
 			}
 			else if(permit == Constant && init == 1)
 			{
-				fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
+				yyerrorvar("Error: %s must be a modifiable expression \n",p->opr.op[0]->id.name);
 				oprType = NULL;
 				break;
 			}
@@ -287,20 +286,16 @@ int ex(nodeType *p) {
 			
 			i = counter;
 			type1 = rightType;
-			
-			
+						
 			if(p->opr.oper != NOT && p->opr.oper != INCREMENT && p->opr.oper != DECREMENT) 
 			{
                 if(p->opr.op[1]->type == typeId && p->opr.op[1]->id.per != undeclared)
 				{
 					oprType = strdup("a");
 					setUsed(p->opr.op[1]->id.index);
-				}
-                            
-						
+				}					
 				ex(p->opr.op[1]);
-				type2 = rightType;
-					
+				type2 = rightType;	
 			}
 			j = counter;
             switch(p->opr.oper) 
