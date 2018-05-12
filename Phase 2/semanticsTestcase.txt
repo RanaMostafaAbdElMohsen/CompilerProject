@@ -1,0 +1,29 @@
+int x='c';
+
+int f ()
+{
+	float uu=0;
+	return uu;
+}
+
+const int x=0;
+
+x=2;
+
+string s="taghreed";
+
+char c= s;
+
+for (i=0;i<10 ;i++)
+{
+}
+
+{
+int o=0;
+}
+
+o=9;
+
+
+int z=3/0;
+

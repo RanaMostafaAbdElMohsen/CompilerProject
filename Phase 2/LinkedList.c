@@ -178,10 +178,9 @@ bool nameUniqueInScope(char * name, int brace)
     {
        if (strcmp(name,ptr->data->symName) == 0)
         {
-            if (ptr->data->symBraces == brace)
-            {
+           
                return false;
-            }
+         
         }
 
        ptr = ptr->next;

@@ -14,6 +14,7 @@ int br = 0;
 int permit;
 char* oprType;
 int base;
+int value;
 
 
 int ex(nodeType *p) {
@@ -51,7 +52,12 @@ int ex(nodeType *p) {
 				break;
 			}
 		}
-		
+		 
+		if(rightType == 0 ) 
+		{
+			value=atoi(p->con.value);
+		}
+		 
 		if ( leftType == 6 && ( rightType == 5 || rightType == 0 ))
 		{
 			fprintf( f1, "Warning : Assigning integer to float\n");
@@ -69,7 +75,8 @@ int ex(nodeType *p) {
 				
 	break;
     case typeId: 
-	   		   
+	   
+		   
 		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
@@ -88,7 +95,10 @@ int ex(nodeType *p) {
 		}
 		else 
     	{
-       		fprintf(f1,"\t mov %s,NULL \n",p->id.name);
+       		fprintf( f1, "\t mov R%01d, null \n", last);
+			fprintf( f1, "\t mov %s, R%01d \n", p->id.name, last);
+			counter++;
+			last++;
 		}
         break;
 		
@@ -120,7 +130,7 @@ int ex(nodeType *p) {
 		//*********************************Case*******************************************	
 		case CASE:
 					ex(p->opr.op[0]);
-					fprintf( f1, "\t JEQ R%01d, R%01d, R%01d \n", last, base, counter);
+					fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n", last, base, counter);
 					fprintf( f1, "\t jnz\tL%03d \n", lbl1 = lbl++); 
 					ex(p->opr.op[1]);
 					ex(p->opr.op[2]);
@@ -184,7 +194,7 @@ int ex(nodeType *p) {
 			
 	//********************************PRINT*******************************************************	
 		case PRINT:  
-			oprType="a";		
+			oprType="a";
             ex(p->opr.op[0]);
 			fprintf( f1, "\t print R%01d\n",last-1);
 			oprType = NULL;
@@ -224,7 +234,7 @@ int ex(nodeType *p) {
 			}
 			else if(permit == Constant && init == 1)
 			{
-				yyerrorvar("Error: %s must be a modifiable expression \n",p->opr.op[0]->id.name);
+				yyerrorvar("Error: %s must be a modifiable expression",p->opr.op[0]->id.name);
 				oprType = NULL;
 				break;
 			}
@@ -246,10 +256,10 @@ int ex(nodeType *p) {
                    
 			}
 
-			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger )) {;}
+			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
 			else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
 			else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
-			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString || rightType == Char || rightType == ConstChar)) {;}
+			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
 			else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool || rightType == Integer || rightType == ConstIntger)) {;}
 			else if(leftType != rightType) 
 			{
@@ -258,7 +268,6 @@ int ex(nodeType *p) {
 				oprType = NULL;
 				break;
 			}
-						
 					
 			fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 			last =0;
@@ -268,6 +277,23 @@ int ex(nodeType *p) {
             rightType = -9;
 			break;
 			
+		//****************************************func********************************
+		  
+		 case  RET:
+		 
+		  fprintf( f1, "\t func begin \n");
+		  ex(p->opr.op[1]);
+		  oprType="a";
+		  ex(p->opr.op[2]);
+		  
+		  leftType=atoi(p->opr.op[0]->con.value);
+		  if(leftType != rightType)
+			  yyerror("Error: incompatible return types for function ");
+		  
+		  fprintf( f1, "\t func end \n");
+		  oprType=NULL;
+			  
+		break;	
 		//****************************************UMINUS******************************			
         case UMINUS:    
             ex(p->opr.op[0]);
@@ -286,16 +312,20 @@ int ex(nodeType *p) {
 			
 			i = counter;
 			type1 = rightType;
-						
+			
+			
 			if(p->opr.oper != NOT && p->opr.oper != INCREMENT && p->opr.oper != DECREMENT) 
 			{
                 if(p->opr.op[1]->type == typeId && p->opr.op[1]->id.per != undeclared)
 				{
 					oprType = strdup("a");
 					setUsed(p->opr.op[1]->id.index);
-				}					
+				}
+                            
+						
 				ex(p->opr.op[1]);
-				type2 = rightType;	
+				type2 = rightType;
+					
 			}
 			j = counter;
             switch(p->opr.oper) 
@@ -344,7 +374,7 @@ int ex(nodeType *p) {
                     oprType = NULL;
 				break;	
 				case DIV:			
-				if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
+				if( p->opr.op[1]->type ==typeCon && value!=0  &&(type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float  || type2 == ConstIntger || type2 == ConstFloat)) {
 					fprintf( f1, "\t div R%01d, R%01d, R%01d \n", last, i, j);
 					last ++;
 					counter++;
@@ -421,7 +451,7 @@ int ex(nodeType *p) {
 			case GREATER:
 				rightType = Bool;
 				if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t JG R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t compGREATER R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -433,7 +463,7 @@ int ex(nodeType *p) {
 			case LESS:
 				rightType = Bool;
 				if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t JL R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t compLESS R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -445,7 +475,7 @@ int ex(nodeType *p) {
 			case GE:
 				rightType = Bool;
 				if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t JGE R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t compGE R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -457,7 +487,7 @@ int ex(nodeType *p) {
 			case LE:
 				rightType = Bool;
 				if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t JLE R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t compLE R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -477,7 +507,7 @@ int ex(nodeType *p) {
 					oprType = NULL;
 					break;
 				}
-				fprintf( f1, "\t JNE R%01d, R%01d, R%01d \n",last, i, j);
+				fprintf( f1, "\t compNE R%01d, R%01d, R%01d \n",last, i, j);
 				last ++;
 				counter++;
 				oprType = NULL;
@@ -494,7 +524,7 @@ int ex(nodeType *p) {
 					oprType = NULL;
 					break;
 				}
-				fprintf( f1, "\t JEQ R%01d, R%01d, R%01d \n",last, i, j);
+				fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n",last, i, j);
 				last ++;
 				counter++;
 				oprType = NULL;
@@ -577,6 +607,4 @@ int ex(nodeType *p) {
 	}
     return 0;
 }
-	
-
 	

@@ -69,7 +69,7 @@ int counter;
 %nonassoc ELSE
 %nonassoc UMINUS
 
-%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration DataTypes  increments switchScope braceIncrementor
+%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration DataTypes  increments switchScope braceIncrementor func 
 %type <iValue> Type
 %type <iValue> Constant
 
@@ -112,13 +112,18 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 
 		
 		| PRINT expression 	SEMICOLON	                         {$$ = opr(PRINT, 1, $2); printf("Print\n");}
-			                                            	
+			
+		
+		| func                                                  {$$=$1;}
       
 		| braceScope											{$$=$1; printf("New braces scope\n");}
 		
 		;
 
  
+func : Type IDENTIFIER ORBRACKET  ERBRACKET OBRACE stmtlist RET  expression  SEMICOLON   EBRACE    { char c[] = {}; sprintf(c,"%d",$1);  $$=opr( RET,3,con(c ,0),$6,$8 ); printf("function\n");}
+	   ;
+	   
 
 		
 braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
@@ -386,7 +391,7 @@ int yyerror(char *s)
 	remove("output.txt"); 
 	f1=fopen("output.txt","w");
 	fprintf(f1, "Syntax Error Could not parse quadruples\n"); 
-	fprintf(stderr, "line number : %d %s\n", yylineno,s);    
+	fprintf(f1, "line number : %d %s\n", yylineno,s);    
  
  	fclose(f2);
 	remove("symbol.txt");

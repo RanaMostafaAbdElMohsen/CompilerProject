@@ -1,0 +1,27 @@
+in x=0;
+
+float y=0.0;
+string m="s";
+
+int i=0,
+
+for(i=0; i<10, i++)
+{
+
+}
+
+bool t == true;
+
+if(x=0)
+{
+
+}
+
+f(x>0)
+{
+}
+
+while( x
+{
+
+}
