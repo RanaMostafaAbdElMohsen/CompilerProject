@@ -53,8 +53,7 @@ for(i=0;i<10;i++)
 	bool flag=false;
 	if(x > 2)
 	{
-		flag=true;
-                                x++;
+		
 	}
 	else
 	{
@@ -68,40 +67,7 @@ while(x)
 	x=x*2;
                 if  ( c <= a)
                 {
-                     a++;
+                 a++;
                 }
 }
 
-int i5 = 999 + i3;
-
-switch(x)
-{
-	case 1:
-		x=0;
-		break;
-		
-	default:
-		 y=0;
-		break;	
-}
-
-a = b ^ c;
-x = -c;
-
-if ( i5 != i3)
-{
-   x += i5;
-  if ( x > 5)
-  {
-      x /=2;
-      y *= 10;
-      z -= 5.5;
-  }
-}
-else
-{
-   string done  = "The_End";
-   print (done);
-}
-
-string Finish = "Finish";

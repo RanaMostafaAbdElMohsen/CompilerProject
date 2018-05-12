@@ -254,10 +254,10 @@ int ex(nodeType *p) {
                    
 			}
 
-			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
+			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger  )) {;}
 			else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
 			else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
-			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
+			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString || rightType==Char || rightType==ConstChar)) {;}
 			else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool || rightType == Integer || rightType == ConstIntger)) {;}
 			else if(leftType != rightType) 
 			{
@@ -605,4 +605,3 @@ int ex(nodeType *p) {
 	}
     return 0;
 }
-	
