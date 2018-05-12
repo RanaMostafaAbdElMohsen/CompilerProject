@@ -35,5 +35,5 @@ Warning : Assigning integer to float
 	 mov R1, 5 
 	 add R2, R0, R1 
 	 mov tewsy, R2 
-	 mov tewsy,NULL 
-	 print R-1
+	 mov R0,tewsy 
+	 print R0
