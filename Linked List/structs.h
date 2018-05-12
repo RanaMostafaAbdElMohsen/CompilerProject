@@ -33,14 +33,6 @@ typedef struct nodeTypeTag {
     };
 } nodeType;
 
-
-extern int          symType[50];
-extern char*        symName[50];
-extern char*        symValue[50];
-extern int          symInit[50];
-extern int          symUsed[50];
-extern int          symBraces[50];
-extern permission   symPerm[50];
 extern FILE* f1;
 extern int yyerror(char *);
 extern int yyerrorvar(char *s, char *var);
