@@ -18,8 +18,13 @@
 	 mov o, R2 
 	 mov R0, 'b' 
 	 mov x, R0 
-Error: g must be a modifiable expression 
-Error: h must be a modifiable expression 
-Error: lo must be a modifiable expression 
-Error: test must be a modifiable expression 
-Error: hes must be a modifiable expression 
+ Error in type 0 
+	 mov g, R-1 
+ Error in type 0 
+	 mov h, R-1 
+	 mov R0,x 
+Error: incompatible types for assignment 
+	 mov R1,h 
+	 mov test, R1 
+ Error in type 1 
+	 mov hes, R-1 

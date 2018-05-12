@@ -223,11 +223,11 @@ int ex(nodeType *p) {
 						oprType = NULL;
 						break;
 					}
-					else if(permit == Constant){
-						fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
-						oprType = NULL;
-						break;
-					}
+					//else if(permit == Constant){
+					//	fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
+					//	oprType = NULL;
+					//	break;
+					//}
 					else if(permit == OutOfScope) {
 						fprintf( f1, "Error: %s is already defined \n", p->opr.op[0]->id.name);
 						oprType = NULL;

@@ -2338,7 +2338,8 @@ yyreturn:
 #line 200 "project.y"
  
 
-nodeType *con(char* value, int type) {
+nodeType *con(char* value, int type) 
+{
     nodeType *p;
 
     /* allocate node */
@@ -2366,8 +2367,7 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 	for (j=0; j<indexCount; j++)
 	{
 		if (strcmp(name,symName[j]) == 0)
-		{
-			
+		{			
 			// is it in the same brace ?
 			if (symBraces[j] == brace)
 			{
@@ -2379,7 +2379,6 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
     /* copy information */
     p->type = typeId;
     p->id.index = index;
-    // dont need these - get them directly from sym table -- leave them for Rana
     p->id.type 	= type;
     p->id.per 	= perm;
     p->id.name 	= strdup(name);

@@ -1,15 +1,15 @@
 Used Variables :- 
 y of type Integer 
 o of type Float 
+x of type Char 
+h of type ConstFloat 
 
 Not Used Variables :- 
 f of type Integer 
 r of type String 
 c of type Char 
 t of type Float 
-x of type Char 
 g of type ConstIntger 
-h of type ConstFloat 
 lo of type ConstString 
 test of type ConstFloat 
 hes of type ConstFloat 
@@ -20,14 +20,14 @@ Initiallized Variables :-
 y of type Integer and value = (null) 
 o of type Float and value = (null) 
 x of type Char and value = (null) 
+g of type ConstIntger and value = (null) 
+h of type ConstFloat and value = (null) 
+lo of type ConstString and value = (null) 
+test of type ConstFloat and value = (null) 
+hes of type ConstFloat and value = (null) 
 
 Not Initiallized Variables :- 
 f of type Integer 
 r of type String 
 c of type Char 
 t of type Float 
-g of type ConstIntger 
-h of type ConstFloat 
-lo of type ConstString 
-test of type ConstFloat 
-hes of type ConstFloat 
