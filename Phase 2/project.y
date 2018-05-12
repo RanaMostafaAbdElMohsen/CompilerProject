@@ -55,7 +55,7 @@ int brace=0;
 %nonassoc ELSE
 %nonassoc UMINUS
 
-%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration DataTypes  increments switchScope
+%type <nPtr> stmt expression stmtlist braceScope forExpression booleanExpression caseExpression  no_declaration DataTypes  increments switchScope braceIncrementor
 %type <iValue> Type
 %type <iValue> Constant
 
@@ -106,12 +106,15 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 
  
 		
-braceScope:	 OBRACE stmtlist EBRACE								{brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $2, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
-			| OBRACE  EBRACE	                                {brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
+braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
+			| OBRACE  EBRACE	                                { char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
 		;
 
-switchScope:  OBRACE caseExpression EBRACE					     {brace++; char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $2, opr(EBRACE,0)); brace--;printf("case brace\n");}		
+switchScope:  OBRACE braceIncrementor caseExpression EBRACE	   { char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("case brace\n");}		
 		;
+		
+braceIncrementor :{$$=NULL; brace++;}
+		
 		
 stmtlist:  stmt { $$ = $1; }
           | stmtlist stmt { $$ = opr(SEMICOLON, 2, $1, $2); }  ;
@@ -130,7 +133,7 @@ Constant : CONST INT {$$=5;}
 		  | CONST BOOL {$$=9;}
 		  ;
 
-no_declaration:   FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1); }              
+no_declaration: FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1); }              
 		| INTEGERNUMBER          { char c[] = {}; itoa($1, c, 10); $$ = con(c, 0); }             
 		| IDENTIFIER              { $$ = getId($1,brace); }             
 		| no_declaration PLUS	no_declaration { $$ = opr(PLUS, 2, $1, $3); }
@@ -140,16 +143,17 @@ no_declaration:   FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1)
 		| no_declaration  REM	no_declaration {$$= opr(REM, 2 ,$1,$3);}
 		| no_declaration  POWER	no_declaration  {$$= opr(POWER, 2 ,$1,$3);}
 		| MINUS no_declaration %prec UMINUS   { $$ = opr(UMINUS, 1, $2); } 
-		| IDENTIFIER INCREMENT                 {$$=opr(INCREMENT,1,$1);}
-		| IDENTIFIER DECREMENT                 {$$=opr(DECREMENT,1,$1);}
-		| ORBRACKET no_declaration ERBRACKET    {$$=$2;}    ;
+		| IDENTIFIER INCREMENT                 {$$=opr(INCREMENT,1,getId($1,brace));}
+		| IDENTIFIER DECREMENT                 {$$=opr(DECREMENT,1,getId($1,brace));}
+		| ORBRACKET no_declaration ERBRACKET    {$$=$2;}    
+		;
 
-increments: IDENTIFIER  INCREMENT              		{$$=opr(INCREMENT,1,$1);}
-		 | IDENTIFIER DECREMENT                		{$$=opr(DECREMENT,1,$1);}
-		 | IDENTIFIER PEQUAL no_declaration    		{$$= opr(PEQUAL, 2 ,$1,$3);}
-		 | IDENTIFIER MEQUAL no_declaration    		{$$= opr(MEQUAL, 2 ,$1,$3);}
-		 | IDENTIFIER MULEQUAL no_declaration 		{$$= opr(MULEQUAL, 2 ,$1,$3);}
-		 | IDENTIFIER DIVEQUAL no_declaration  		{$$= opr(DIVEQUAL, 2 ,$1,$3);}
+increments: IDENTIFIER  INCREMENT              		{$$=opr(INCREMENT,1,getId($1,brace));}
+		 | IDENTIFIER DECREMENT                		{$$=opr(DECREMENT,1,getId($1,brace));}
+		 | IDENTIFIER PEQUAL no_declaration    		{$$= opr(PEQUAL, 2 ,getId($1,brace),$3);}
+		 | IDENTIFIER MEQUAL no_declaration    		{$$= opr(MEQUAL, 2 ,getId($1,brace),$3);}
+		 | IDENTIFIER MULEQUAL no_declaration 		{$$= opr(MULEQUAL, 2 ,getId($1,brace),$3);}
+		 | IDENTIFIER DIVEQUAL no_declaration  		{$$= opr(DIVEQUAL, 2 ,getId($1,brace),$3);}
 		 ;
 
 
@@ -208,7 +212,7 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 {
 
 	 nodeType *p;
-
+   
     /* allocate node */
     if ((p = malloc(sizeof(nodeType))) == NULL)         
 		yyerror("out of memory");
@@ -219,6 +223,7 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 	{
 		if (strcmp(name,symName[j]) == 0)
 		{
+			
 			// is it in the same brace ?
 			if (symBraces[j] == brace)
 			{
@@ -230,7 +235,6 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
     /* copy information */
     p->type = typeId;
     p->id.index = index;
-    
     // dont need these - get them directly from sym table -- leave them for Rana
     p->id.type 	= type;
     p->id.per 	= perm;
@@ -243,7 +247,6 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 	symUsed[index]	 = 0;
 	symBraces[index] = brace;
 	symPerm[index]	 = perm;
-	
     return p;
 }
 
@@ -397,7 +400,6 @@ int yyerrorvar(char *s, char *var)
 {
 	fclose(f1);
 	int x= remove("output.txt");
-	printf("%d",x);
 	f1=fopen("output.txt","w");
 	fprintf(f1, "Syntax Error Could not parse quadruples\n");
  	fprintf(f1, "line number: %d %s : %s\n", yylineno,s,var);

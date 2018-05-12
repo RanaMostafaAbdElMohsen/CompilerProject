@@ -28,6 +28,7 @@ int ex(nodeType *p) {
     case typeCon: 
 		//{ Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} 
 		rightType = p->con.type;
+		
 		if(
 			( leftType == 5 && ( rightType != 5 || rightType != 0 )) || 											//integer
 			( leftType == 6 && ( rightType != 6 || rightType != 1 || rightType != 5 || rightType != 0 )) || 		//float
@@ -36,15 +37,16 @@ int ex(nodeType *p) {
 			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
 		)
 		{
-			fprintf( f1, " Error in type %s \n", p->con.type);
+			yyerrorvar(" Error in type %d \n", p->con.type) 
 			break;
 		}
 		
-		if (leftType == 9 )
+		if (leftType == 9 || leftType == 4 )
 		{
-			if (atoi(p->con.value) != 0 || atoi(p->con.value) != 1)
+			
+			if (atoi(p->con.value) != 0 && atoi(p->con.value) != 1)
 			{
-				fprintf( f1," Error in type %s \n", p->con.type);
+				fprintf( f1," Error in type %d \n", p->con.type);
 				break;
 			}
 		}
@@ -55,18 +57,19 @@ int ex(nodeType *p) {
 				
 	break;
     case typeId: 
-	  
+	   
+		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
     		rightType = p->id.type;
+			
 		}
 		else 
     	{
        		fprintf(f1,"\t mov %s,NULL \n",p->id.name);
     	}
 		
-        last++;
-		counter++;
+        
         break;
     case typeOpr:
         switch(p->opr.oper) {
@@ -85,6 +88,7 @@ int ex(nodeType *p) {
 			if(symName[jj] != NULL){
 				if(symBraces[jj] == br) {
 					symBraces[jj] = -5;
+					
 				}
 			}
 		}
@@ -168,12 +172,17 @@ int ex(nodeType *p) {
 			
 	//*********************************FOR**********************************************************
      case FOR:
+	    
 		ex(p->opr.op[0]);
+		
         fprintf( f1, "L%03d:\n", lbl1 = lbl++);
 		ex(p->opr.op[1]);
+		
 		fprintf( f1, "\t jnz\tL%03d\n", lbl2 = lbl++);
 		ex(p->opr.op[3]);
+		
 		ex(p->opr.op[2]);
+		
 		fprintf( f1, "\t jmp\tL%03d\n", lbl1);
 		fprintf( f1, "L%03d:\n", lbl2); 
 		oprType = NULL;
@@ -214,7 +223,7 @@ int ex(nodeType *p) {
 					else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
 					else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
 					else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
-					else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool)) {;}
+					else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool || rightType == Integer || rightType == ConstIntger)) {;}
 					else if(leftType != rightType) {
 						fprintf( f1, "Error: incompatible types for assignment \n");
 						oprType = NULL;
@@ -240,10 +249,24 @@ int ex(nodeType *p) {
 	   //******************************************DEFAULT******************************		
         default:
 			oprType = strdup("a");
-            ex(p->opr.op[0]);
-			i=counter;
-            ex(p->opr.op[1]);
-			j=counter;
+                    if(p->opr.op[0]->type == typeId && p->opr.op[0]->id.per != undeclared)
+                        symUsed[p->opr.op[0]->id.index] = 1;
+                    
+					 ex(p->opr.op[0]);
+			
+					 i = counter;
+					 type1 = rightType;
+			
+			
+					 if(p->opr.oper != NOT && p->opr.oper != INCREMENT && p->opr.oper != DECREMENT) {
+                        if(p->opr.op[1]->type == typeId && p->opr.op[1]->id.per != undeclared)
+                            symUsed[p->opr.op[1]->id.index] = 1;
+						
+						ex(p->opr.op[1]);
+						type2 = rightType;
+						
+					}
+			         j = counter;
             switch(p->opr.oper) {
 						    case PLUS:
 							if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)) {
