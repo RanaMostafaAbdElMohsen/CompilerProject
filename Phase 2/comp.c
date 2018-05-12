@@ -37,7 +37,6 @@ int ex(nodeType *p) {
 			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
 		)
 		{
-
 			fprintf( f1," Error in type %d \n", p->con.type);
 			break;
 		}
@@ -59,6 +58,7 @@ int ex(nodeType *p) {
 	break;
     case typeId: 
 	   
+		   
 		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
@@ -75,9 +75,7 @@ int ex(nodeType *p) {
 		else 
     	{
        		fprintf(f1,"\t mov %s,NULL \n",p->id.name);
-    	}
-		
-        
+		}
         break;
     case typeOpr:
         switch(p->opr.oper) {
@@ -136,7 +134,9 @@ int ex(nodeType *p) {
 		//*********************WHILE*************************************************************************	
         case WHILE:
             fprintf(f1,"L%03d:\n", lbl1 = lbl++);
+			oprType = strdup("a");
             ex(p->opr.op[0]);
+			oprType = NULL;
             fprintf(f1,"\tjz\tL%03d\n", lbl2 = lbl++);
             ex(p->opr.op[1]);
             fprintf(f1,"\tjmp\tL%03d\n", lbl1);
@@ -148,13 +148,17 @@ int ex(nodeType *p) {
 		 case DO:
 					fprintf( f1, "L%03d:\n", lbl1 = lbl++);
 					ex(p->opr.op[0]);
+					oprType = strdup("a");
                     ex(p->opr.op[1]);
+					oprType = NULL;
 					fprintf( f1, "\t jnz\tL%03d\n", lbl1);
 		break;	
 			
 		//********************IF*****************************************************************************	
         case IF:
-            ex(p->opr.op[0]);
+		   oprType = strdup("a");
+           ex(p->opr.op[0]);
+		   oprType=NULL;
             if (p->opr.nops > 2) {
                 /* if else */
                 fprintf(f1,"\tjz\tL%03d\n", lbl1 = lbl++);

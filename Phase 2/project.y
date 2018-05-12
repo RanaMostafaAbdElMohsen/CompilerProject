@@ -84,17 +84,17 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 
 		| DO braceScope WHILE ORBRACKET expression ERBRACKET SEMICOLON	{$$ = opr(DO,2, $2, $5);printf("Do while\n");}
 
-		| FOR ORBRACKET INT IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
+		| FOR ORBRACKET IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
 		  expression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											   {char c[] = {}; itoa($6, c, 10);$$ = opr(FOR,4, opr(ASSIGN, 2, getId($4,brace), con(c, 0)),$8,$10,$12); printf("For loop\n");}
+		  braceScope											   {char c[] = {}; itoa($5, c, 10);$$ = opr(FOR, 4, opr(ASSIGN, 2, getId($3,brace), con(c, 0)), $7, $9, $11); printf("For loop\n");}
 
 		
 		| IF ORBRACKET expression ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
 
 		| IF ORBRACKET expression ERBRACKET braceScope	 ELSE braceScope	{$$ = opr(IF, 3, $3, $5, $7); printf("If-Elsestatement\n");}
 
-		| SWITCH ORBRACKET IDENTIFIER ERBRACKET switchScope      {$$ = opr(SWITCH, 2, $3, $5);printf("Switch case\n");}
+		| SWITCH ORBRACKET IDENTIFIER ERBRACKET switchScope      {$$ = opr(SWITCH, 2, getId($3,brace), $5);printf("Switch case\n");}
 
 		
 		| PRINT expression 	SEMICOLON	                         {$$ = opr(PRINT, 1, $2); printf("Print\n");}
@@ -265,6 +265,7 @@ nodeType * getId(char * name, int brace)
 		{
 			if (symBraces[j] == brace)
 			{
+				
 				flagFound = 1;
 				index = j;
 				break;
