@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include "structs.h"
+#include "LinkedList.h"
 #include <math.h>
-char* idtype [10] = {"Integer", "Float", "Char", "String", "Bool", "ConstIntger", "ConstFloat", "ConstChar", "ConstString", "ConstBool"};
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
 nodeType * id(int index, int type, int brace, permission perm, char * name);
@@ -21,20 +20,31 @@ int yylineno;
 FILE * f1;
 FILE * f2; 
 FILE * yyin;
-/* symbol table */
-int  symType[50];
-char* symName[50];
-char* symValue[50];
-int symInit[50];
-int symUsed[50];
-int symBraces[50];
-permission   symPerm[50];
+/******* Do not edit - for symbol Table *****************************************/
+// extern struct symTableNode * head ;
+// extern struct symTableNode * current;
+// extern struct SymTableData* getSymTableData(int type, int init, int used, int brace,char * name,permission perm );
+// extern void insertFirst(int index, struct SymTableData* data);
+// extern struct symTableNode* deleteFirst();
+// extern int length();
+// extern bool isEmpty() ;
+// extern struct SymTableData* find(int index);
+// extern void printList();
+// extern void setBrace(int findBrace);
+// extern void setUsed(int findIndex);
+// extern void setInit(int findIndex);
+// extern void printUsed();
+// extern void printNotUsed();
+// extern void printInit();
+// extern void printNotInit();
+// extern bool nameUniqueInScope(char * name, int brace);
+// extern int getIndex(char * name, int brace);
+/*********************************************************************************/
 int indexCount=0;
 int brace=0;
 int counter;
 %}
-%union 
-{
+%union {
     int iValue;                 /* integer value */
 	float fValue;               /* float Value */
     char * sValue;              /* string value */
@@ -91,7 +101,7 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 		| FOR ORBRACKET IDENTIFIER ASSIGN INTEGERNUMBER SEMICOLON 
 		  expression SEMICOLON 
 		  forExpression ERBRACKET
-		  braceScope											   {char c[] = {}; itoa($5, c, 10);$$ = opr(FOR, 4, opr(ASSIGN, 2, getId($3,brace), con(c, 0)), $7, $9, $11); printf("For loop\n");}
+		  braceScope											   {char c[] = {}; sprintf(c,"%d",$5);$$ = opr(FOR, 4, opr(ASSIGN, 2, getId($3,brace), con(c, 0)), $7, $9, $11); printf("For loop\n");}
 
 		
 		| IF ORBRACKET expression ERBRACKET braceScope %prec IFX {$$ = opr(IF, 2, $3, $5);printf("If statement\n");}
@@ -111,11 +121,11 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
  
 
 		
-braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
-			| OBRACE  EBRACE	                                { char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
+braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
+			| OBRACE  EBRACE	                                { char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
 		;
 
-switchScope:  OBRACE braceIncrementor caseExpression EBRACE	   { char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("case brace\n");}		
+switchScope:  OBRACE braceIncrementor caseExpression EBRACE	   { char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("case brace\n");}		
 		;
 		
 braceIncrementor :{$$=NULL; brace++;}
@@ -139,7 +149,7 @@ Constant : CONST INT {$$=5;}
 		  ;
 
 no_declaration: FLOATNUMBER    { char c[] = {}; ftoa($1, c, 6); $$ = con(c, 1); }              
-		| INTEGERNUMBER          { char c[] = {}; itoa($1, c, 10); $$ = con(c, 0); }             
+		| INTEGERNUMBER          { char c[] = {};sprintf(c,"%d",$1); $$ = con(c, 0); }             
 		| IDENTIFIER              { $$ = getId($1,brace); }             
 		| no_declaration PLUS	no_declaration { $$ = opr(PLUS, 2, $1, $3); }
 		| no_declaration MINUS no_declaration  {$$= opr(MINUS,2,$1,$3);}
@@ -193,14 +203,13 @@ expression:	DataTypes {  $$ = $1; }
 		| booleanExpression {  $$ = $1; } ;
 
 caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON           { $$ = opr(DEFAULT, 2, $3, opr(BREAK, 0)); }                                          
-	 	| CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON  caseExpression  { char c[] = {}; itoa($2, c, 10); $$ = opr(CASE, 4, con(c, 0), $4, opr(BREAK, 0), $7); }		
+	 	| CASE INTEGERNUMBER COLON stmtlist BREAK SEMICOLON  caseExpression  { char c[] = {}; sprintf(c,"%d",$2); $$ = opr(CASE, 4, con(c, 0), $4, opr(BREAK, 0), $7); }		
 		   ;
 
 
 %% 
 
-nodeType *con(char* value, int type) 
-{
+nodeType *con(char* value, int type) {
     nodeType *p;
 
     /* allocate node */
@@ -224,73 +233,45 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 		yyerror("out of memory");
 	
     // check if the name already exists in the symName table
-	int j=0;
-	for (j=0; j<indexCount; j++)
+	if (!nameUniqueInScope(name,brace))
 	{
-		if (strcmp(name,symName[j]) == 0)
-		{			
-			// is it in the same brace ?
-			if (symBraces[j] == brace)
-			{
-				yyerrorvar("Identifier name already defined before in this scope",name);
-			}
-		}
+		yyerrorvar("Identifier name already defined before in this scope",name);
 	}
 
     /* copy information */
     p->type = typeId;
     p->id.index = index;
+
+    // dont need these - get them directly from sym table -- leave them for Rana
     p->id.type 	= type;
     p->id.per 	= perm;
     p->id.name 	= strdup(name);
   
     // insert into symbol table
-    symName[index] 	 = strdup(name);
-    symType[index]   = type;
-    symInit[index]	 = 0;
-	symUsed[index]	 = 0;
-	symBraces[index] = brace;
-	symPerm[index]	 = perm;
+    int init = 0;
+    int used = 0;
+    struct SymTableData * data1 = getSymTableData(type,init,used,brace,name,perm);
+    insertFirst(index,data1);
+
     return p;
 }
 
 nodeType * getId(char * name, int brace)
 {
-	int index;
-	int j=0;
-	int flagFound = 0;
-
+	
 	// searching for the identifier's name in the Symbol Table
 	// Variable found must be in a valid brace scope (!= -5)
+	int index = getIndex(name,brace);
 
-	for (j=0; j<indexCount; j++)
-	{
-		if (strcmp(name,symName[j]) == 0 && symBraces[j] != -5 )
-		{
-			if (symBraces[j] == brace)
-			{
-				
-				flagFound = 1;
-				index = j;
-				break;
-			}
-			else
-			{
-				// possible declaration was made in a previous valid brace
-				flagFound = 1;
-				index = j;
-			}
-		}
-	}
-	
-	if (flagFound == 0)
+	if (index == -1)
 	{
 		yyerrorvar("Undeclared Variable",strdup(name));
 	}
 	else
 	{
 		nodeType *p;
-
+		struct SymTableData * node = find(index);
+	    
 	    /* allocate node */
 	    if ((p = malloc(sizeof(nodeType))) == NULL)         
 			yyerror("out of memory");
@@ -299,9 +280,9 @@ nodeType * getId(char * name, int brace)
 	    p->type = typeId;
 	    
 	    p->id.index = index;
-	    p->id.type 	= symType[index];
-	    p->id.per 	= symPerm[index];
-	    p->id.name 	= strdup(symName[index]);
+	    p->id.type 	= node->symType;
+	    p->id.per 	= node->symPerm;
+	    p->id.name 	= strdup(node->symName);
 
 	    return p;
 	}
@@ -368,8 +349,7 @@ int toStr(int x, char str[], int d) {
 	return i;
 }
 
-void ftoa(float n, char res[], int afterpoint) 
-{
+void ftoa(float n, char res[], int afterpoint) {
 	
 	// Extract integer part
 	int ipart = (int)n;
@@ -440,43 +420,43 @@ int main(void)
 		
 		int i;
 		
-		fprintf(f2,"Used Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symUsed[i] != 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"Used Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symUsed[i] != 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\nNot Used Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symUsed[i] == 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nNot Used Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symUsed[i] == 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\n-----------------------------------------------\n");
+		// fprintf(f2,"\n-----------------------------------------------\n");
 		
-		fprintf(f2,"\nInitiallized Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symInit[i] != 0)
-			{
-				fprintf(f2,"%s of type %s\n" ,symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nInitiallized Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symInit[i] != 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d and value = %s \n" ,symName[i],(typeEnum)symType[i],symValue[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\nNot Initiallized Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symInit[i] == 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nNot Initiallized Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symInit[i] == 0)
+		// 	{
+		// 		//fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i],symValue[i]);
+		// 	}
+		// }
 						
 	}
 	else
@@ -487,5 +467,5 @@ int main(void)
 	fclose(f1);
 	fclose(f2);
 	fclose(yyin);
-	return 0;
+    return 0;
 }

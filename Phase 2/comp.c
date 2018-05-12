@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "structs.h"
+#include "LinkedList.h"
 #include "y.tab.h"
 
 static int lbl;
@@ -30,11 +30,11 @@ int ex(nodeType *p) {
 		rightType = p->con.type;
 		
 		if(
-			( leftType == 5 && ( rightType != 5 && rightType != 0 )) || 											//integer
-			( leftType == 6 && ( rightType != 6 && rightType != 1 && rightType != 5 && rightType != 0 )) || 		//float
-			( leftType == 7 && ( rightType != 7 && rightType != 2 )) || 											//char
-			( leftType == 8 && ( rightType != 8 && rightType != 3 && rightType != 7 && rightType != 2 )) || 		//string
-			( leftType == 9 && ( rightType != 9 && rightType != 4 && rightType != 5 && rightType != 0 ))    		//Bool
+			( leftType == 5 && ( rightType != 5 || rightType != 0 )) || 											//integer
+			( leftType == 6 && ( rightType != 6 || rightType != 1 || rightType != 5 || rightType != 0 )) || 		//float
+			( leftType == 7 && ( rightType != 7 || rightType != 2 )) || 											//char
+			( leftType == 8 && ( rightType != 8 || rightType != 3 || rightType != 7 || rightType != 2 )) || 		//string
+			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
 		)
 		{
 			fprintf( f1," Error in type %d \n", p->con.type);
@@ -73,7 +73,10 @@ int ex(nodeType *p) {
 		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
-    		if (symInit[p->id.index] == 0)
+			int index=(int)p->id.index;
+			struct SymTableData * data= find(index);
+			int init=(int)data->symInit;
+    		if (init == 0)
     		{
     			fprintf(f1,"\t WARNING: Variable %s is not initialized\n",p->id.name);	
     		}
@@ -99,16 +102,7 @@ int ex(nodeType *p) {
 		break;	
 		//*********************EBRACE************************************************************************
 		case EBRACE:
-		;
-		int jj = 0;
-		for(jj = 0; jj < 50; jj++){
-			if(symName[jj] != NULL){
-				if(symBraces[jj] == br) {
-					symBraces[jj] = -5;
-					
-				}
-			}
-		}
+		setBrace(br);
 		br--;
 		break;
 		
@@ -124,7 +118,7 @@ int ex(nodeType *p) {
 		//*********************************Case*******************************************	
 		case CASE:
 					ex(p->opr.op[0]);
-					fprintf( f1, "\t BEQ R%01d, R%01d, R%01d \n", last, base, counter);
+					fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n", last, base, counter);
 					fprintf( f1, "\t jnz\tL%03d \n", lbl1 = lbl++); 
 					ex(p->opr.op[1]);
 					ex(p->opr.op[2]);
@@ -217,33 +211,32 @@ int ex(nodeType *p) {
 					leftType = p->opr.op[0]->id.type;
 					oprType = strdup("a");
 					permit = p->opr.op[0]->id.per;
-					if(permit == undeclared) 
-					{
-						fprintf( f1, "Error: %s is not declared \n", p->opr.op[0]->id.name);
+					struct SymTableData * data= find(p->opr.op[0]->id.index);
+					int init=(int)data->symInit;
+					if(permit == undeclared) {
+						yyerrorvar("Error: %s is not declared",p->opr.op[0]->id.name);
 						oprType = NULL;
 						break;
 					}
-					else if(permit == Constant && symInit[p->opr.op[0]->id.index] == 1)
+					else if(permit == Constant && init == 1)
 					{
 						fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
 						oprType = NULL;
 						break;
-					}
-					else if(permit == OutOfScope) 
-					{					
-					fprintf( f1, "Error: %s is already defined \n", p->opr.op[0]->id.name);
+}
+					else if(permit == OutOfScope) {
+						yyerrorvar("Error: %s is already defined",p->opr.op[0]->id.name);
 						oprType = NULL;
 						break;
 					}
 					
-					symInit[p->opr.op[0]->id.index] = 1;
+					setInit(p->opr.op[0]->id.index);
 					ex(p->opr.op[1]);
-					if(p->opr.op[1]->type == typeId) 
-					{
-						if(p->opr.op[1]->id.per != undeclared)
-						{
-							symUsed[p->opr.op[1]->id.index] = 1;
+					if(p->opr.op[1]->type == typeId) {
+						if(p->opr.op[1]->id.per != undeclared){
+							setUsed(p->opr.op[1]->id.index);
 						}
+                    
 					}
 
 					if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
@@ -252,7 +245,8 @@ int ex(nodeType *p) {
 					else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
 					else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool || rightType == Integer || rightType == ConstIntger)) {;}
 					else if(leftType != rightType) {
-						fprintf( f1, "Error: incompatible types for assignment \n");
+						
+						yyerror("Error: incompatible types for assignment ");
 						oprType = NULL;
 						break;
 					}
@@ -277,7 +271,7 @@ int ex(nodeType *p) {
         default:
 			oprType = strdup("a");
                     if(p->opr.op[0]->type == typeId && p->opr.op[0]->id.per != undeclared)
-                        symUsed[p->opr.op[0]->id.index] = 1;
+						setUsed(p->opr.op[0]->id.index);
                     
 					 ex(p->opr.op[0]);
 			
@@ -286,8 +280,11 @@ int ex(nodeType *p) {
 			
 			
 					 if(p->opr.oper != NOT && p->opr.oper != INCREMENT && p->opr.oper != DECREMENT) {
-                        if(p->opr.op[1]->type == typeId && p->opr.op[1]->id.per != undeclared)
-                            symUsed[p->opr.op[1]->id.index] = 1;
+                        if(p->opr.op[1]->type == typeId && p->opr.op[1]->id.per != undeclared){
+							oprType = strdup("a");
+							setUsed(p->opr.op[1]->id.index);
+						}
+                            
 						
 						ex(p->opr.op[1]);
 						type2 = rightType;
@@ -302,7 +299,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for addition \n");
+								yyerror("Error: incompatible types for addition ");
 							}
                             oprType = NULL;
 							break;
@@ -314,7 +311,8 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for subtraction \n");
+								yyerror("Error: incompatible types for subtraction ");
+								
 							}
                             oprType = NULL;
 							break;
@@ -326,7 +324,8 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for multiplication \n");
+								yyerror("Error: incompatible types for multiplication ");
+								
 							}
                             oprType = NULL;
 							break;
@@ -339,7 +338,8 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for division \n");
+								
+								yyerror("Error: incompatible types for division ");
 							}
                             oprType = NULL;
 							break;
@@ -354,7 +354,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for reminader  operation \n");
+								yyerror("Error: incompatible types for remainder ");
 							}
                             oprType = NULL;
 							break;
@@ -366,7 +366,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for power operation\n");
+								yyerror("Error: incompatible types for power ");
 							}
                             oprType = NULL;
 							break;
@@ -380,7 +380,7 @@ int ex(nodeType *p) {
 								
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for not \n");
+								yyerror("Error: incompatible types for not ");
 							}
                             oprType = NULL;
 							
@@ -394,7 +394,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for && \n");
+								yyerror("Error: incompatible types for && ");
 							}
                             oprType = NULL;
 							break;
@@ -408,7 +408,8 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for || \n");
+								yyerror("Error: incompatible operands types for ||");
+								
 							}
                             oprType = NULL;
 							break;
@@ -421,7 +422,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for > \n");
+								yyerror("Error: incompatible operands types for >");
 							}
                             oprType = NULL;
 							break;
@@ -433,7 +434,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for < \n");
+								yyerror("Error: incompatible operands types for <");
 							}
                             oprType = NULL;
 							break;
@@ -445,7 +446,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for >= \n");
+								yyerror("Error: incompatible operands types for >=");
 							}
                             oprType = NULL;
 							break;
@@ -457,7 +458,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for <= \n");
+								yyerror("Error: incompatible operands types for <=");
 							}
                             oprType = NULL;
 							break;
@@ -468,11 +469,11 @@ int ex(nodeType *p) {
 							else if((type1 == String || type1 == ConstString) && (type2 == String || type2 == ConstString)){}
 							else if((type1 == Bool || type1 == ConstBool ) && (type2 == Bool || type2 ==ConstBool)){}
 							else {
-								fprintf( f1, "Error: incompatible operands for != \n");
+								yyerror("Error: incompatible operands types for !=");
                                 oprType = NULL;
 								break;
 							}
-							fprintf( f1, "\t BNE R%01d, R%01d, R%01d \n",last, i, j);
+							fprintf( f1, "\t compNE R%01d, R%01d, R%01d \n",last, i, j);
 							last ++;
 							counter++;
                             oprType = NULL;
@@ -484,11 +485,11 @@ int ex(nodeType *p) {
 							else if((type1 == String || type1 == ConstString) && (type2 == String || type2 == ConstString)){}
 							else if((type1 == Bool || type1 == ConstBool ) && (type2 == Bool || type2 ==ConstBool)){}
 							else {
-								fprintf( f1, "Error: incompatible operands for == \n");
+								yyerror("Error: incompatible operands types for ==");
 								oprType = NULL;
                                 break;
 							}
-							fprintf( f1, "\t BE R%01d, R%01d, R%01d \n",last, i, j);
+							fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n",last, i, j);
 							last ++;
 							counter++;
                             oprType = NULL;
@@ -500,7 +501,7 @@ int ex(nodeType *p) {
 								fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for increment \n");
+								yyerror("Error: incompatible operands for increment");
 							}
                             oprType = NULL;
 							break;
@@ -510,7 +511,7 @@ int ex(nodeType *p) {
 								fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for decrement \n");
+								yyerror("Error: incompatible operands for decrement");
 							}
                             oprType = NULL;
 							break;							
@@ -522,7 +523,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for += \n");
+								yyerror("Error: incompatible operands for +=");
 							}
                             oprType = NULL;
 							break;
@@ -535,7 +536,8 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for -= \n");
+								
+								yyerror("Error: incompatible operands for -=");
 							}
 							break;
 						case MULEQUAL:
@@ -545,7 +547,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for *= \n");
+								yyerror("Error: incompatible operands for *=");
 							}
 							break;
 						case DIVEQUAL:
@@ -555,7 +557,7 @@ int ex(nodeType *p) {
 								counter++;
 							}
 							else {
-								fprintf( f1, "Error: incompatible operands for /= \n");
+								yyerror("Error: incompatible operands for /=");
 							}
 							break;
                     
