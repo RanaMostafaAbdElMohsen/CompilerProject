@@ -1,0 +1,9 @@
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\bin\Debug\Complier.exe.config
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\bin\Debug\Complier.exe
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\bin\Debug\Complier.pdb
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.csprojResolveAssemblyReference.cache
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.Form1.resources
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.Properties.Resources.resources
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.csproj.GenerateResource.Cache
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.exe
+C:\Users\Fady\Documents\Visual Studio 2015\Projects\Complier\Complier\obj\Debug\Complier.pdb
