@@ -127,7 +127,7 @@ func : Type IDENTIFIER ORBRACKET  ERBRACKET OBRACE stmtlist RET  expression  SEM
 
 		
 braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
-			| OBRACE  EBRACE	                                { char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
+			| OBRACE  braceIncrementor EBRACE	                                { char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
 		;
 
 switchScope:  OBRACE braceIncrementor caseExpression EBRACE	   { char c[] = {}; sprintf(c,"%d",brace); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("case brace\n");}		
