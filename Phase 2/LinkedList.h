@@ -1,6 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
 #include"structs.h"
 
 typedef struct SymTableData
@@ -36,9 +39,9 @@ void setValue(int index, char * value);
 void setBrace(int findBrace);
 void setUsed(int findIndex);
 void setInit(int findIndex);
-void printUsed();
-void printNotUsed();
-void printInit();
-void printNotInit();
+void printUsed(FILE *f);
+void printNotUsed(FILE *f);
+void printInit(FILE *f);
+void printNotInit(FILE *f);
 bool nameUniqueInScope(char * name, int brace);
 int getIndex(char * name, int brace);

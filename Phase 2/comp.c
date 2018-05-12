@@ -185,7 +185,7 @@ int ex(nodeType *p) {
 			
 	//********************************PRINT*******************************************************	
 		case PRINT:  
-			oprType="a";
+			oprType="a";		
             ex(p->opr.op[0]);
 			fprintf( f1, "\t print R%01d\n",last-1);
 			oprType = NULL;
@@ -581,4 +581,6 @@ int ex(nodeType *p) {
 	}
     return 0;
 }
+	
+
 	

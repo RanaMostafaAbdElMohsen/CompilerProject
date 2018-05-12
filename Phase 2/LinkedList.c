@@ -3,6 +3,7 @@
 
 struct symTableNode * head = NULL;
 struct symTableNode * current = NULL;
+char* idtype [10] = {"Integer", "Float", "Char", "String", "Bool", "ConstIntger", "ConstFloat", "ConstChar", "ConstString", "ConstBool"};
 
 struct SymTableData* getSymTableData(int type, int init, int used, int brace, char * name,permission perm )
 {
@@ -98,73 +99,73 @@ void setInit(int findIndex)
     printf(" ]\n\n");
  }
 
- void printUsed()
+ void printUsed(FILE *f)
  {
      struct symTableNode *ptr = head;
-     printf("Used Identifiers:\n[ ");
+     fprintf(f,"Used Identifiers :- \n");
 
      //start from the beginning
      while(ptr != NULL)
      {
        if (ptr->data->symUsed == 1)
        {
-           printf("%s\t",ptr->data->symName);
+           fprintf(f,"%s of type %s\n",ptr->data->symName,idtype[ptr->data->symType]);
        }
         ptr = ptr->next;
      }
 
-     printf(" ]\n");
+     fprintf(f,"\n");
  }
- void printNotUsed()
+ void printNotUsed(FILE *f)
  {
      struct symTableNode *ptr = head;
-     printf("Unused Identifiers:\n[ ");
+     fprintf(f,"Unused Identifiers :-\n");
 
      //start from the beginning
      while(ptr != NULL)
      {
        if (ptr->data->symUsed == 0)
        {
-           printf("%s\t",ptr->data->symName);
+           fprintf(f,"%s of type %s \n",ptr->data->symName,idtype[ptr->data->symType]);
        }
         ptr = ptr->next;
      }
 
-     printf(" ]\n");
+     fprintf(f,"\n");
  }
- void printInit()
+ void printInit(FILE *f)
  {
      struct symTableNode *ptr = head;
-     printf("Initialized Identifiers\n[ ");
+     fprintf(f,"Initialized Identifiers :- \n");
 
      //start from the beginning
      while(ptr != NULL)
      {
        if (ptr->data->symInit == 1)
        {
-           printf("%s\t",ptr->data->symName);
+           fprintf(f,"%s of type %s \n",ptr->data->symName,idtype[ptr->data->symType]);
        }
         ptr = ptr->next;
      }
 
-     printf(" ]\n");
+     fprintf(f," \n");
  }
- void printNotInit()
+ void printNotInit(FILE *f)
  {
      struct symTableNode *ptr = head;
-     printf("Uninitialized Identifiers\n[ ");
+     fprintf(f,"Uninitialized Identifiers :- \n");
 
      //start from the beginning
      while(ptr != NULL)
      {
        if (ptr->data->symInit == 0)
        {
-           printf("%s\t",ptr->data->symName);
+           fprintf(f,"%s of type %s \n",ptr->data->symName,idtype[ptr->data->symType]);
        }
         ptr = ptr->next;
      }
 
-     printf(" ]\n");
+     fprintf(f," \n");
  }
 
 

@@ -1,35 +1,36 @@
-Used Variables :- 
-y of type Integer 
-o of type Float 
-h of type ConstFloat 
-
-Not Used Variables :- 
-f of type Integer 
-r of type String 
-c of type Char 
-t of type Float 
-x of type Char 
-g of type ConstIntger 
-test of type ConstFloat 
-hes of type ConstFloat 
-testing of type Float 
+Initialized Identifiers :- 
 tewsy of type Float 
-
+testing of type Float 
+hes of type ConstFloat 
+test of type ConstFloat 
+h of type ConstFloat 
+g of type ConstIntger 
+x of type Char 
+o of type Float 
+y of type Integer 
+ 
+Uninitialized Identifiers :- 
+t of type Float 
+c of type Char 
+r of type String 
+f of type Integer 
+ 
 -----------------------------------------------
 
-Initiallized Variables :- 
-y of type Integer
-o of type Float
-x of type Char
-g of type ConstIntger
+Used Identifiers :- 
 h of type ConstFloat
-test of type ConstFloat
-hes of type ConstFloat
-testing of type Float
-tewsy of type Float
+o of type Float
+y of type Integer
 
-Not Initiallized Variables :- 
-f of type Integer 
-r of type String 
-c of type Char 
+Unused Identifiers :-
+tewsy of type Float 
+testing of type Float 
+hes of type ConstFloat 
+test of type ConstFloat 
+g of type ConstIntger 
+x of type Char 
 t of type Float 
+c of type Char 
+r of type String 
+f of type Integer 
+

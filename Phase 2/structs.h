@@ -34,5 +34,6 @@ typedef struct nodeTypeTag {
 } nodeType;
 
 extern FILE* f1;
+extern FILE* f2;
 extern int yyerror(char *);
 extern int yyerrorvar(char *s, char *var);

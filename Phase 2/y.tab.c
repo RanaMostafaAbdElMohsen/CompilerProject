@@ -2557,53 +2557,23 @@ int yyerrorvar(char *s, char *var)
 int main(void) 
 {   
 	yyin = fopen("input.txt", "r");
-	f1=fopen("output.txt","w");
+	f1 = fopen("output.txt","w");
 	f2 = fopen("symbol.txt","w");
 	
 	if(!yyparse())
 	{
 		printf("\nParsing complete\n");
 		
-		int i;
+		//fprintf(f2,"\n");
 		
-		// fprintf(f2,"Used Variables :- \n");
-		// for (i = 0 ; i < indexCount ; i ++)
-		// {
-		// 	if (symUsed[i] != 0)
-		// 	{
-		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
-		// 	}
-		// }
+		printInit(f2);
+		printNotInit(f2);
 		
-		// fprintf(f2,"\nNot Used Variables :- \n");
-		// for (i = 0 ; i < indexCount ; i ++)
-		// {
-		// 	if (symUsed[i] == 0)
-		// 	{
-		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
-		// 	}
-		// }
+		fprintf(f2,"-----------------------------------------------\n\n");
+	
+		printUsed(f2);
+		printNotUsed(f2);
 		
-		// fprintf(f2,"\n-----------------------------------------------\n");
-		
-		// fprintf(f2,"\nInitiallized Variables :- \n");
-		// for (i = 0 ; i < indexCount ; i ++)
-		// {
-		// 	if (symInit[i] != 0)
-		// 	{
-		// 		fprintf(f2,"%s of type %d and value = %s \n" ,symName[i],(typeEnum)symType[i],symValue[i]);
-		// 	}
-		// }
-		
-		// fprintf(f2,"\nNot Initiallized Variables :- \n");
-		// for (i = 0 ; i < indexCount ; i ++)
-		// {
-		// 	if (symInit[i] == 0)
-		// 	{
-		// 		//fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i],symValue[i]);
-		// 	}
-		// }
-						
 	}
 	else
 	{
