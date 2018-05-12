@@ -1,8 +1,6 @@
 Initialized Identifiers :- 
 Finish of type String 
 done of type String 
-y of type Integer 
-x of type Integer 
 i5 of type Integer 
 flag of type Bool 
 i of type Integer 
@@ -58,8 +56,6 @@ i2 of type Integer
 Unused Identifiers :-
 Finish of type String 
 done of type String 
-y of type Integer 
-x of type Integer 
 flag of type Bool 
 m of type Float 
 tewsy of type Float 

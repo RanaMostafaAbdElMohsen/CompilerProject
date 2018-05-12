@@ -68,7 +68,7 @@ while(x)
 	x=x*2;
                 if  ( c <= a)
                 {
-                     a ++;
+                     a++;
                 }
 }
 
@@ -77,11 +77,11 @@ int i5 = 999 + i3;
 switch(x)
 {
 	case 1:
-		int x=0;
+		x=0;
 		break;
 		
 	default:
-		int y=0;
+		 y=0;
 		break;	
 }
 

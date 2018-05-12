@@ -1,10 +1,15 @@
-	 mov i1,NULL 
-	 mov f1,NULL 
-	 mov c1,NULL 
-	 mov s1,NULL 
-	 mov b1,NULL 
-	 mov R0, 50 
-	 mov i2, R0 
+	 mov R0, null 
+	 mov i1, R0 
+	 mov R1, null 
+	 mov f1, R1 
+	 mov R2, null 
+	 mov c1, R2 
+	 mov R3, null 
+	 mov s1, R3 
+	 mov R4, null 
+	 mov b1, R4 
+	 mov R5, 50 
+	 mov i2, R5 
 	 mov R0, 99.900001 
 	 mov f2, R0 
 	 mov R0, 'f' 
@@ -23,12 +28,16 @@
 	 mov s3, R0 
 	 mov R0, 0 
 	 mov b3, R0 
-	 mov x,NULL 
-	 mov y,NULL 
-	 mov z,NULL 
-	 mov result,NULL 
-	 mov R0,i3 
-	 mov xew, R0 
+	 mov R0, null 
+	 mov x, R0 
+	 mov R1, null 
+	 mov y, R1 
+	 mov R2, null 
+	 mov z, R2 
+	 mov R3, null 
+	 mov result, R3 
+	 mov R4,i3 
+	 mov xew, R4 
 	 mov R0, 5 
 	 neg R1, R0 
 	 mov x, R1 
@@ -97,13 +106,13 @@ Warning : Assigning integer to float
 L000:
 	 mov R0,i 
 	 mov R1, 10 
-	 compL R2, R0, R1 
+	 compLESS R2, R0, R1 
 	 jnz	L001
 	 mov R3, false 
 	 mov flag, R3 
 	 mov R0,x 
 	 mov R1, 2 
-	 compG R2, R0, R1 
+	 compGREATER R2, R0, R1 
 	jz	L002
 	 mov R3, true 
 	 mov flag, R3 
@@ -171,7 +180,7 @@ Label0:
 	 add R5, R3, R4 
 	 mov R6,x 
 	 mov R7, 5 
-	 compG R8, R6, R7 
+	 compGREATER R8, R6, R7 
 	jz	L009
 	 mov R9,x 
 	 mov R10, 2 
