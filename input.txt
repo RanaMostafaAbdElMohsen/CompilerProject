@@ -1,0 +1,73 @@
+int i1;
+float f1;
+char c1;
+string s1;
+bool b1;
+
+int i2 = 50;
+float f2 = 99.9;
+char c2 = 'f';
+string s2 = "Compilers";
+bool b2 = true;
+
+const int i3 = 99 ;
+const float f3 = i2;
+const char c3 = c2;
+const string s3 = c2;
+const bool b3 = 0;
+
+int x;
+int y;
+float z;
+float result;
+
+x = -5;
+y = 0 + 1;
+z = 5 - 0.9;
+float try  = x + y * - z;
+string p = "b";
+float testing = try + 1.8;
+float tewsy = try + 5;
+print (tewsy);
+
+int a=1;
+int b=3;
+int c=1;
+int d=8;
+x= c-d+(a*b);
+
+int i=0;
+
+for(i=0;i<10;i++)
+{
+	bool flag=false;
+	if(x > 2)
+	{
+		flag=true;
+                                x++;
+	}
+	else
+	{
+		flag=false;
+                                 x--;
+	}
+}
+
+while(x)
+{
+	x=x*2;
+}
+
+int i5 = 999 + i3;
+switch(x)
+
+{
+	case 1:
+		int x=0;
+		break;
+		
+	default:
+		int y=0;
+		break;
+	
+}
