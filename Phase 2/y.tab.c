@@ -74,9 +74,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include "structs.h"
+#include "LinkedList.h"
 #include <math.h>
-char* idtype [10] = {"Integer", "Float", "Char", "String", "Bool", "ConstIntger", "ConstFloat", "ConstChar", "ConstString", "ConstBool"};
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
 nodeType * id(int index, int type, int brace, permission perm, char * name);
@@ -92,21 +91,33 @@ int yylineno;
 FILE * f1;
 FILE * f2; 
 FILE * yyin;
-/* symbol table */
-int  symType[50];
-char* symName[50];
-char* symValue[50];
-int symInit[50];
-int symUsed[50];
-int symBraces[50];
-permission   symPerm[50];
+/******* Do not edit - for symbol Table *****************************************/
+// extern struct symTableNode * head ;
+// extern struct symTableNode * current;
+// extern struct SymTableData* getSymTableData(int type, int init, int used, int brace,char * name,permission perm );
+// extern void insertFirst(int index, struct SymTableData* data);
+// extern struct symTableNode* deleteFirst();
+// extern int length();
+// extern bool isEmpty() ;
+// extern struct SymTableData* find(int index);
+// extern void printList();
+// extern void setBrace(int findBrace);
+// extern void setUsed(int findIndex);
+// extern void setInit(int findIndex);
+// extern void printUsed();
+// extern void printNotUsed();
+// extern void printInit();
+// extern void printNotInit();
+// extern bool nameUniqueInScope(char * name, int brace);
+// extern int getIndex(char * name, int brace);
+/*********************************************************************************/
 int indexCount=0;
 int brace=0;
 int counter;
 
 
 /* Line 189 of yacc.c  */
-#line 110 "y.tab.c"
+#line 121 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -259,7 +270,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 37 "project.y"
+#line 47 "project.y"
 
     int iValue;                 /* integer value */
 	float fValue;               /* float Value */
@@ -271,7 +282,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 275 "y.tab.c"
+#line 286 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -283,7 +294,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 287 "y.tab.c"
+#line 298 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -603,14 +614,14 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    69,    69,    72,    73,    76,    78,    81,    83,    85,
-      87,    89,    91,    97,    99,   101,   104,   107,   114,   115,
-     118,   121,   124,   125,   127,   128,   129,   130,   131,   134,
-     135,   136,   137,   138,   141,   142,   143,   144,   145,   146,
-     147,   148,   149,   150,   151,   152,   153,   156,   157,   158,
-     159,   160,   161,   165,   166,   168,   169,   170,   171,   172,
-     173,   174,   175,   176,   177,   183,   184,   185,   186,   187,
-     192,   193,   195,   196
+       0,    79,    79,    82,    83,    86,    88,    91,    93,    95,
+      97,    99,   101,   107,   109,   111,   114,   117,   124,   125,
+     128,   131,   134,   135,   137,   138,   139,   140,   141,   144,
+     145,   146,   147,   148,   151,   152,   153,   154,   155,   156,
+     157,   158,   159,   160,   161,   162,   163,   166,   167,   168,
+     169,   170,   171,   175,   176,   178,   179,   180,   181,   182,
+     183,   184,   185,   186,   187,   193,   194,   195,   196,   197,
+     202,   203,   205,   206
 };
 #endif
 
@@ -1633,497 +1644,497 @@ yyreduce:
         case 3:
 
 /* Line 1455 of yacc.c  */
-#line 72 "project.y"
+#line 82 "project.y"
     {ex((yyvsp[(2) - (2)].nPtr)); freeNode((yyvsp[(2) - (2)].nPtr));}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 76 "project.y"
+#line 86 "project.y"
     {(yyval.nPtr)=id(indexCount,(yyvsp[(1) - (3)].iValue),brace,Accepted,(yyvsp[(2) - (3)].id));printf("Declaration\n");indexCount++;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 78 "project.y"
+#line 88 "project.y"
     {(yyval.nPtr) = opr(ASSIGN,2, getId((yyvsp[(1) - (4)].id),brace), (yyvsp[(3) - (4)].nPtr)); printf("Assignment\n");}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 81 "project.y"
+#line 91 "project.y"
     {(yyval.nPtr) = opr(ASSIGN,2, id(indexCount,(yyvsp[(1) - (5)].iValue),brace,Accepted,(yyvsp[(2) - (5)].id)), (yyvsp[(4) - (5)].nPtr)); indexCount++; printf("Declaration and Assignment\n");}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 83 "project.y"
+#line 93 "project.y"
     { (yyval.nPtr) = opr(ASSIGN,2, id(indexCount,(yyvsp[(1) - (5)].iValue),brace,Constant,(yyvsp[(2) - (5)].id)), (yyvsp[(4) - (5)].nPtr)); indexCount++;printf("Constant assignment\n");}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 85 "project.y"
+#line 95 "project.y"
     {(yyval.nPtr)=(yyvsp[(1) - (2)].nPtr); printf("Increments\n");}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 87 "project.y"
+#line 97 "project.y"
     {(yyval.nPtr) = opr(WHILE,2, (yyvsp[(3) - (5)].nPtr), (yyvsp[(5) - (5)].nPtr)); printf("While loop\n");}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 89 "project.y"
+#line 99 "project.y"
     {(yyval.nPtr) = opr(DO,2, (yyvsp[(2) - (7)].nPtr), (yyvsp[(5) - (7)].nPtr));printf("Do while\n");}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 94 "project.y"
-    {char c[] = {}; itoa((yyvsp[(5) - (11)].iValue), c, 10);(yyval.nPtr) = opr(FOR, 4, opr(ASSIGN, 2, getId((yyvsp[(3) - (11)].id),brace), con(c, 0)), (yyvsp[(7) - (11)].nPtr), (yyvsp[(9) - (11)].nPtr), (yyvsp[(11) - (11)].nPtr)); printf("For loop\n");}
+#line 104 "project.y"
+    {char c[] = {}; sprintf(c,"%d",(yyvsp[(5) - (11)].iValue));(yyval.nPtr) = opr(FOR, 4, opr(ASSIGN, 2, getId((yyvsp[(3) - (11)].id),brace), con(c, 0)), (yyvsp[(7) - (11)].nPtr), (yyvsp[(9) - (11)].nPtr), (yyvsp[(11) - (11)].nPtr)); printf("For loop\n");}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 97 "project.y"
+#line 107 "project.y"
     {(yyval.nPtr) = opr(IF, 2, (yyvsp[(3) - (5)].nPtr), (yyvsp[(5) - (5)].nPtr));printf("If statement\n");}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 99 "project.y"
+#line 109 "project.y"
     {(yyval.nPtr) = opr(IF, 3, (yyvsp[(3) - (7)].nPtr), (yyvsp[(5) - (7)].nPtr), (yyvsp[(7) - (7)].nPtr)); printf("If-Elsestatement\n");}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 101 "project.y"
+#line 111 "project.y"
     {(yyval.nPtr) = opr(SWITCH, 2, getId((yyvsp[(3) - (5)].id),brace), (yyvsp[(5) - (5)].nPtr));printf("Switch case\n");}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 104 "project.y"
+#line 114 "project.y"
     {(yyval.nPtr) = opr(PRINT, 1, (yyvsp[(2) - (3)].nPtr)); printf("Print\n");}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 107 "project.y"
+#line 117 "project.y"
     {(yyval.nPtr)=(yyvsp[(1) - (1)].nPtr); printf("New braces scope\n");}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 114 "project.y"
-    { char c[] = {}; itoa(brace, c, 10); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), (yyvsp[(3) - (4)].nPtr), opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
+#line 124 "project.y"
+    { char c[] = {}; sprintf(c,"%d",brace); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), (yyvsp[(3) - (4)].nPtr), opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 115 "project.y"
-    { char c[] = {}; itoa(brace, c, 10); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
+#line 125 "project.y"
+    { char c[] = {}; sprintf(c,"%d",brace); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 118 "project.y"
-    { char c[] = {}; itoa(brace, c, 10); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), (yyvsp[(3) - (4)].nPtr), opr(EBRACE,0)); brace--;printf("case brace\n");}
+#line 128 "project.y"
+    { char c[] = {}; sprintf(c,"%d",brace); (yyval.nPtr) = opr(OBRACE, 3, con(c ,0), (yyvsp[(3) - (4)].nPtr), opr(EBRACE,0)); brace--;printf("case brace\n");}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 121 "project.y"
+#line 131 "project.y"
     {(yyval.nPtr)=NULL; brace++;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 124 "project.y"
+#line 134 "project.y"
     { (yyval.nPtr) = (yyvsp[(1) - (1)].nPtr); }
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 125 "project.y"
+#line 135 "project.y"
     { (yyval.nPtr) = opr(SEMICOLON, 2, (yyvsp[(1) - (2)].nPtr), (yyvsp[(2) - (2)].nPtr)); }
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 127 "project.y"
+#line 137 "project.y"
     {(yyval.iValue)=0;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 128 "project.y"
+#line 138 "project.y"
     {(yyval.iValue)=1;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 129 "project.y"
+#line 139 "project.y"
     {(yyval.iValue)=2;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 130 "project.y"
+#line 140 "project.y"
     {(yyval.iValue)=3;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 131 "project.y"
+#line 141 "project.y"
     {(yyval.iValue)=4;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 134 "project.y"
+#line 144 "project.y"
     {(yyval.iValue)=5;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 135 "project.y"
+#line 145 "project.y"
     {(yyval.iValue)=6;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 136 "project.y"
+#line 146 "project.y"
     {(yyval.iValue)=7;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 137 "project.y"
+#line 147 "project.y"
     {(yyval.iValue)=8;}
     break;
 
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 138 "project.y"
+#line 148 "project.y"
     {(yyval.iValue)=9;}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 141 "project.y"
+#line 151 "project.y"
     { char c[] = {}; ftoa((yyvsp[(1) - (1)].fValue), c, 6); (yyval.nPtr) = con(c, 1); }
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 142 "project.y"
-    { char c[] = {}; itoa((yyvsp[(1) - (1)].iValue), c, 10); (yyval.nPtr) = con(c, 0); }
+#line 152 "project.y"
+    { char c[] = {};sprintf(c,"%d",(yyvsp[(1) - (1)].iValue)); (yyval.nPtr) = con(c, 0); }
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 143 "project.y"
+#line 153 "project.y"
     { (yyval.nPtr) = getId((yyvsp[(1) - (1)].id),brace); }
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 144 "project.y"
+#line 154 "project.y"
     { (yyval.nPtr) = opr(PLUS, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 145 "project.y"
+#line 155 "project.y"
     {(yyval.nPtr)= opr(MINUS,2,(yyvsp[(1) - (3)].nPtr),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 146 "project.y"
+#line 156 "project.y"
     {(yyval.nPtr)= opr(MUL, 2 ,(yyvsp[(1) - (3)].nPtr),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 147 "project.y"
+#line 157 "project.y"
     {(yyval.nPtr)= opr(DIV, 2 ,(yyvsp[(1) - (3)].nPtr),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 148 "project.y"
+#line 158 "project.y"
     {(yyval.nPtr)= opr(REM, 2 ,(yyvsp[(1) - (3)].nPtr),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 149 "project.y"
+#line 159 "project.y"
     {(yyval.nPtr)= opr(POWER, 2 ,(yyvsp[(1) - (3)].nPtr),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 150 "project.y"
+#line 160 "project.y"
     { (yyval.nPtr) = opr(UMINUS, 1, (yyvsp[(2) - (2)].nPtr)); }
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 151 "project.y"
+#line 161 "project.y"
     {(yyval.nPtr)=opr(INCREMENT,1,getId((yyvsp[(1) - (2)].id),brace));}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 152 "project.y"
+#line 162 "project.y"
     {(yyval.nPtr)=opr(DECREMENT,1,getId((yyvsp[(1) - (2)].id),brace));}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 153 "project.y"
+#line 163 "project.y"
     {(yyval.nPtr)=(yyvsp[(2) - (3)].nPtr);}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 156 "project.y"
+#line 166 "project.y"
     {(yyval.nPtr)=opr(INCREMENT,1,getId((yyvsp[(1) - (2)].id),brace));}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 157 "project.y"
+#line 167 "project.y"
     {(yyval.nPtr)=opr(DECREMENT,1,getId((yyvsp[(1) - (2)].id),brace));}
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 158 "project.y"
+#line 168 "project.y"
     {(yyval.nPtr)= opr(PEQUAL, 2 ,getId((yyvsp[(1) - (3)].id),brace),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 159 "project.y"
+#line 169 "project.y"
     {(yyval.nPtr)= opr(MEQUAL, 2 ,getId((yyvsp[(1) - (3)].id),brace),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 160 "project.y"
+#line 170 "project.y"
     {(yyval.nPtr)= opr(MULEQUAL, 2 ,getId((yyvsp[(1) - (3)].id),brace),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 161 "project.y"
+#line 171 "project.y"
     {(yyval.nPtr)= opr(DIVEQUAL, 2 ,getId((yyvsp[(1) - (3)].id),brace),(yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 165 "project.y"
+#line 175 "project.y"
     {(yyval.nPtr)=(yyvsp[(1) - (1)].nPtr);}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 166 "project.y"
+#line 176 "project.y"
     {(yyval.nPtr) = opr(ASSIGN, 2, getId((yyvsp[(1) - (3)].id),brace), (yyvsp[(3) - (3)].nPtr));}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 168 "project.y"
+#line 178 "project.y"
     { (yyval.nPtr) = opr(AND, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 169 "project.y"
+#line 179 "project.y"
     { (yyval.nPtr) = opr(OR , 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 170 "project.y"
+#line 180 "project.y"
     { (yyval.nPtr) = opr(NOT, 1, (yyvsp[(2) - (2)].nPtr)); }
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 171 "project.y"
+#line 181 "project.y"
     { (yyval.nPtr) = opr(GREATER, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 172 "project.y"
+#line 182 "project.y"
     { (yyval.nPtr) = opr(LESS, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 173 "project.y"
+#line 183 "project.y"
     { (yyval.nPtr) = opr(GE, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 174 "project.y"
+#line 184 "project.y"
     { (yyval.nPtr) = opr(LE, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 175 "project.y"
+#line 185 "project.y"
     { (yyval.nPtr) = opr(NE, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 176 "project.y"
+#line 186 "project.y"
     { (yyval.nPtr) = opr(EQ, 2, (yyvsp[(1) - (3)].nPtr), (yyvsp[(3) - (3)].nPtr)); }
     break;
 
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 177 "project.y"
+#line 187 "project.y"
     {  (yyval.nPtr) = (yyvsp[(2) - (3)].nPtr); }
     break;
 
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 183 "project.y"
+#line 193 "project.y"
     {  (yyval.nPtr) = (yyvsp[(1) - (1)].nPtr); }
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 184 "project.y"
+#line 194 "project.y"
     { (yyval.nPtr) = con((yyvsp[(1) - (1)].cValue), 2); }
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 185 "project.y"
+#line 195 "project.y"
     { (yyval.nPtr) = con("false", 4); }
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 186 "project.y"
+#line 196 "project.y"
     { (yyval.nPtr) = con("true", 4); }
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 187 "project.y"
+#line 197 "project.y"
     { (yyval.nPtr) = con((yyvsp[(1) - (1)].sValue), 3); }
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 192 "project.y"
+#line 202 "project.y"
     {  (yyval.nPtr) = (yyvsp[(1) - (1)].nPtr); }
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 193 "project.y"
+#line 203 "project.y"
     {  (yyval.nPtr) = (yyvsp[(1) - (1)].nPtr); }
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 195 "project.y"
+#line 205 "project.y"
     { (yyval.nPtr) = opr(DEFAULT, 2, (yyvsp[(3) - (5)].nPtr), opr(BREAK, 0)); }
     break;
 
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 196 "project.y"
-    { char c[] = {}; itoa((yyvsp[(2) - (7)].iValue), c, 10); (yyval.nPtr) = opr(CASE, 4, con(c, 0), (yyvsp[(4) - (7)].nPtr), opr(BREAK, 0), (yyvsp[(7) - (7)].nPtr)); }
+#line 206 "project.y"
+    { char c[] = {}; sprintf(c,"%d",(yyvsp[(2) - (7)].iValue)); (yyval.nPtr) = opr(CASE, 4, con(c, 0), (yyvsp[(4) - (7)].nPtr), opr(BREAK, 0), (yyvsp[(7) - (7)].nPtr)); }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 2127 "y.tab.c"
+#line 2138 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2335,7 +2346,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 200 "project.y"
+#line 210 "project.y"
  
 
 nodeType *con(char* value, int type) 
@@ -2363,73 +2374,45 @@ nodeType * id(int index, int type, int brace, permission  perm, char * name)
 		yyerror("out of memory");
 	
     // check if the name already exists in the symName table
-	int j=0;
-	for (j=0; j<indexCount; j++)
+	if (!nameUniqueInScope(name,brace))
 	{
-		if (strcmp(name,symName[j]) == 0)
-		{			
-			// is it in the same brace ?
-			if (symBraces[j] == brace)
-			{
-				yyerrorvar("Identifier name already defined before in this scope",name);
-			}
-		}
+		yyerrorvar("Identifier name already defined before in this scope",name);
 	}
 
     /* copy information */
     p->type = typeId;
     p->id.index = index;
+
+    // dont need these - get them directly from sym table -- leave them for Rana
     p->id.type 	= type;
     p->id.per 	= perm;
     p->id.name 	= strdup(name);
   
     // insert into symbol table
-    symName[index] 	 = strdup(name);
-    symType[index]   = type;
-    symInit[index]	 = 0;
-	symUsed[index]	 = 0;
-	symBraces[index] = brace;
-	symPerm[index]	 = perm;
+    int init = 0;
+    int used = 0;
+    struct SymTableData * data1 = getSymTableData(type,init,used,brace,name,perm);
+    insertFirst(index,data1);
+
     return p;
 }
 
 nodeType * getId(char * name, int brace)
 {
-	int index;
-	int j=0;
-	int flagFound = 0;
-
+	
 	// searching for the identifier's name in the Symbol Table
 	// Variable found must be in a valid brace scope (!= -5)
+	int index = getIndex(name,brace);
 
-	for (j=0; j<indexCount; j++)
-	{
-		if (strcmp(name,symName[j]) == 0 && symBraces[j] != -5 )
-		{
-			if (symBraces[j] == brace)
-			{
-				
-				flagFound = 1;
-				index = j;
-				break;
-			}
-			else
-			{
-				// possible declaration was made in a previous valid brace
-				flagFound = 1;
-				index = j;
-			}
-		}
-	}
-	
-	if (flagFound == 0)
+	if (index == -1)
 	{
 		yyerrorvar("Undeclared Variable",strdup(name));
 	}
 	else
 	{
 		nodeType *p;
-
+		struct SymTableData * node = find(index);
+	    
 	    /* allocate node */
 	    if ((p = malloc(sizeof(nodeType))) == NULL)         
 			yyerror("out of memory");
@@ -2438,16 +2421,17 @@ nodeType * getId(char * name, int brace)
 	    p->type = typeId;
 	    
 	    p->id.index = index;
-	    p->id.type 	= symType[index];
-	    p->id.per 	= symPerm[index];
-	    p->id.name 	= strdup(symName[index]);
+	    p->id.type 	= node->symType;
+	    p->id.per 	= node->symPerm;
+	    p->id.name 	= strdup(node->symName);
 
 	    return p;
 	}
 	
 }
 
-nodeType *opr(int oper, int nops, ...) {
+nodeType *opr(int oper, int nops, ...) 
+{
     va_list ap;
     nodeType *p;
     int i;
@@ -2467,7 +2451,8 @@ nodeType *opr(int oper, int nops, ...) {
     return p;
 }
 
-void freeNode(nodeType *p) {
+void freeNode(nodeType *p)
+{
     int i;
 
     if (!p) return;
@@ -2478,7 +2463,8 @@ void freeNode(nodeType *p) {
     free (p);
 }
 
-void reverse(char *str, int len) {
+void reverse(char *str, int len) 
+{
 	int i=0, j=len-1, temp;
 	while (i<j)
 	{
@@ -2489,7 +2475,8 @@ void reverse(char *str, int len) {
 	}
 }
 
-int toStr(int x, char str[], int d) {
+int toStr(int x, char str[], int d) 
+{
 	int i = 0;
 	while (x)
 	{
@@ -2579,43 +2566,43 @@ int main(void)
 		
 		int i;
 		
-		fprintf(f2,"Used Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symUsed[i] != 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"Used Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symUsed[i] != 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\nNot Used Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symUsed[i] == 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nNot Used Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symUsed[i] == 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\n-----------------------------------------------\n");
+		// fprintf(f2,"\n-----------------------------------------------\n");
 		
-		fprintf(f2,"\nInitiallized Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symInit[i] != 0)
-			{
-				fprintf(f2,"%s of type %s\n" ,symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nInitiallized Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symInit[i] != 0)
+		// 	{
+		// 		fprintf(f2,"%s of type %d and value = %s \n" ,symName[i],(typeEnum)symType[i],symValue[i]);
+		// 	}
+		// }
 		
-		fprintf(f2,"\nNot Initiallized Variables :- \n");
-		for (i = 0 ; i < indexCount ; i ++)
-		{
-			if (symInit[i] == 0)
-			{
-				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
-			}
-		}
+		// fprintf(f2,"\nNot Initiallized Variables :- \n");
+		// for (i = 0 ; i < indexCount ; i ++)
+		// {
+		// 	if (symInit[i] == 0)
+		// 	{
+		// 		//fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i],symValue[i]);
+		// 	}
+		// }
 						
 	}
 	else
@@ -2626,5 +2613,5 @@ int main(void)
 	fclose(f1);
 	fclose(f2);
 	fclose(yyin);
-	return 0;
+    return 0;
 }

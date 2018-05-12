@@ -209,7 +209,8 @@ caseExpression:	DEFAULT COLON stmtlist BREAK SEMICOLON           { $$ = opr(DEFA
 
 %% 
 
-nodeType *con(char* value, int type) {
+nodeType *con(char* value, int type) 
+{
     nodeType *p;
 
     /* allocate node */
@@ -289,7 +290,8 @@ nodeType * getId(char * name, int brace)
 	
 }
 
-nodeType *opr(int oper, int nops, ...) {
+nodeType *opr(int oper, int nops, ...) 
+{
     va_list ap;
     nodeType *p;
     int i;
@@ -309,7 +311,8 @@ nodeType *opr(int oper, int nops, ...) {
     return p;
 }
 
-void freeNode(nodeType *p) {
+void freeNode(nodeType *p)
+{
     int i;
 
     if (!p) return;
@@ -320,7 +323,8 @@ void freeNode(nodeType *p) {
     free (p);
 }
 
-void reverse(char *str, int len) {
+void reverse(char *str, int len) 
+{
 	int i=0, j=len-1, temp;
 	while (i<j)
 	{
@@ -331,7 +335,8 @@ void reverse(char *str, int len) {
 	}
 }
 
-int toStr(int x, char str[], int d) {
+int toStr(int x, char str[], int d) 
+{
 	int i = 0;
 	while (x)
 	{
@@ -349,7 +354,8 @@ int toStr(int x, char str[], int d) {
 	return i;
 }
 
-void ftoa(float n, char res[], int afterpoint) {
+void ftoa(float n, char res[], int afterpoint) 
+{
 	
 	// Extract integer part
 	int ipart = (int)n;

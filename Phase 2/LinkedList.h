@@ -10,14 +10,15 @@ typedef struct SymTableData
     int symUsed;
     int symBraces;
     char * symValue;
-     char * symName;
+    char * symName;
     permission symPerm;
 
 }SymTableData;
 
 
 /* A linked list symTableNode */
-typedef struct symTableNode {
+typedef struct symTableNode 
+{
     struct SymTableData * data;
     int index;
     struct symTableNode *next;
