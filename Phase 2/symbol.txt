@@ -1,36 +1,72 @@
 Initialized Identifiers :- 
+y of type Integer 
+x of type Integer 
+flag of type Bool 
+i of type Integer 
+d of type Integer 
+c of type Integer 
+b of type Integer 
+a of type Integer 
 tewsy of type Float 
 testing of type Float 
-hes of type ConstFloat 
-test of type ConstFloat 
-h of type ConstFloat 
-g of type ConstIntger 
-x of type Char 
-o of type Float 
+p of type String 
+try of type Float 
+z of type Float 
 y of type Integer 
+x of type Integer 
+b3 of type ConstBool 
+s3 of type ConstString 
+c3 of type ConstChar 
+f3 of type ConstFloat 
+i3 of type ConstIntger 
+b2 of type Bool 
+s2 of type String 
+c2 of type Char 
+f2 of type Float 
+i2 of type Integer 
  
 Uninitialized Identifiers :- 
-t of type Float 
-c of type Char 
-r of type String 
-f of type Integer 
+result of type Float 
+b1 of type Bool 
+s1 of type String 
+c1 of type Char 
+f1 of type Float 
+i1 of type Integer 
  
 -----------------------------------------------
 
 Used Identifiers :- 
-h of type ConstFloat
-o of type Float
+i of type Integer
+d of type Integer
+c of type Integer
+b of type Integer
+a of type Integer
+try of type Float
 y of type Integer
+x of type Integer
+c2 of type Char
+i2 of type Integer
 
 Unused Identifiers :-
+y of type Integer 
+x of type Integer 
+flag of type Bool 
 tewsy of type Float 
 testing of type Float 
-hes of type ConstFloat 
-test of type ConstFloat 
-g of type ConstIntger 
-x of type Char 
-t of type Float 
-c of type Char 
-r of type String 
-f of type Integer 
+p of type String 
+result of type Float 
+z of type Float 
+b3 of type ConstBool 
+s3 of type ConstString 
+c3 of type ConstChar 
+f3 of type ConstFloat 
+i3 of type ConstIntger 
+b2 of type Bool 
+s2 of type String 
+f2 of type Float 
+b1 of type Bool 
+s1 of type String 
+c1 of type Char 
+f1 of type Float 
+i1 of type Integer 
 

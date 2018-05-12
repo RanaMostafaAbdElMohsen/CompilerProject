@@ -1,39 +1,128 @@
-	 mov f,NULL 
-	 mov r,NULL 
-	 mov c,NULL 
-	 mov t,NULL 
+	 mov i1,NULL 
+	 mov f1,NULL 
+	 mov c1,NULL 
+	 mov s1,NULL 
+	 mov b1,NULL 
+	 mov R0, 50 
+	 mov i2, R0 
+	 mov R0, 99.900001 
+	 mov f2, R0 
+	 mov R0, 'f' 
+	 mov c2, R0 
+	 mov R0, "Compilers" 
+	 mov s2, R0 
+	 mov R0, true 
+	 mov b2, R0 
+	 mov R0, 99 
+	 mov i3, R0 
+	 mov R0,i2 
+	 mov f3, R0 
+	 mov R0,c2 
+	 mov c3, R0 
+	 mov R0,c2 
+	 mov s3, R0 
+	 mov R0, 0 
+	 mov b3, R0 
+	 mov x,NULL 
+	 mov y,NULL 
+	 mov z,NULL 
+	 mov result,NULL 
 	 mov R0, 5 
-	 mov y, R0 
-	 mov R0, 7.599999 
-	 mov o, R0 
-	 mov R0, 's' 
-	 mov x, R0 
-	 mov R0,y 
+	 neg R1, R0 
+	 mov x, R1 
+	 mov R0, 0 
 	 mov R1, 1 
 	 add R2, R0, R1 
 	 mov y, R2 
-	 mov R0,o 
+	 mov R0, 5 
 	 mov R1, .900000 
 	 sub R2, R0, R1 
-	 mov o, R2 
-	 mov R0, 'b' 
-	 mov x, R0 
-	 mov R0, 1 
-	 mov g, R0 
-Warning : Assigning integer to float
-	 mov R0, 5.0 
-	 mov h, R0 
-	 mov R0,h 
-	 mov test, R0 
-	 mov R0, 6.900000 
-	 mov hes, R0 
-	 mov R0,h 
+	 mov z, R2 
+	 mov R0,x 
+	 mov R1,y 
+	 mov R2,z 
+	 neg R3, R2 
+	 mul R4, R1, R3 
+	 add R5, R0, R4 
+	 mov try, R5 
+	 mov R0, "b" 
+	 mov p, R0 
+	 mov R0,try 
 	 mov R1, 1.799999 
 	 add R2, R0, R1 
 	 mov testing, R2 
-	 mov R0,h 
+	 mov R0,try 
 	 mov R1, 5 
 	 add R2, R0, R1 
 	 mov tewsy, R2 
 	 mov R0,tewsy 
 	 print R0
+	 mov R1, 1 
+	 mov a, R1 
+	 mov R0, 3 
+	 mov b, R0 
+	 mov R0, 1 
+	 mov c, R0 
+	 mov R0, 8 
+	 mov d, R0 
+	 mov R0,c 
+	 mov R1,d 
+	 sub R2, R0, R1 
+	 mov R3,a 
+	 mov R4,b 
+	 mul R5, R3, R4 
+	 add R6, R2, R5 
+	 mov x, R6 
+	 mov R0, 0 
+	 mov i, R0 
+	 mov R0, 0 
+	 mov i, R0 
+L000:
+	 mov R0,i 
+	 mov R1, 10 
+	 JL R2, R0, R1 
+	 jnz	L001
+	 mov R3, false 
+	 mov flag, R3 
+	 mov R0,x 
+	 mov R1, 2 
+	 JG R2, R0, R1 
+	jz	L002
+	 mov R3, true 
+	 mov flag, R3 
+	 mov R0,x 
+	 inc R0 
+	 mov x, R0 
+	jmp	L003
+L002:
+	 mov R1, false 
+	 mov flag, R1 
+	 mov R0,x 
+	 dec R0 
+	 mov x, R0 
+L003:
+	 mov R1,i 
+	 inc R1 
+	 mov i, R1 
+	 jmp	L000
+L001:
+L004:
+	 mov R2,x 
+	jz	L005
+	 mov R3,x 
+	 mov R4, 2 
+	 mul R5, R3, R4 
+	 mov x, R5 
+	jmp	L004
+L005:
+	 mov R0,x 
+	 mov R1, 1 
+	 JEQ R2, R0, R1 
+	 jnz	L006 
+	 mov R2, 0 
+	 mov x, R2 
+	 jmp Label0 
+L006:
+	 mov R0, 0 
+	 mov y, R0 
+Label0: 

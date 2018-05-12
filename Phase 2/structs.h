@@ -3,13 +3,15 @@ typedef enum { Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, Cons
 typedef enum { Accepted, undeclared, Constant, OutOfScope} permission;
 
 /* constants */
-typedef struct {
+typedef struct 
+{
     typeEnum type;                  	/* type of constant */
 	char * value;						/* value of constant as char array */
 } conNodeType;
 
 /* identifiers */
-typedef struct {
+typedef struct 
+{
     int         index;          				/* subscript to sym table  and brace table*/
 	typeEnum    type; 						/* type */
 	permission  per;
@@ -17,16 +19,19 @@ typedef struct {
 } idNodeType;
 
 /* operators */
-typedef struct {
+typedef struct 
+{
     int oper;                   		/* operator */
     int nops;                   		/* number of operands */
     struct nodeTypeTag *op[1];			/* operands, extended at runtime */
 } oprNodeType;
 
-typedef struct nodeTypeTag {
+typedef struct nodeTypeTag 
+{
     nodeEnum type;              		/* type of node */
 
-    union {
+    union 
+	{
         conNodeType con;        		/* constants */
         idNodeType id;          		/* identifiers */
         oprNodeType opr;        		/* operators */

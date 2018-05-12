@@ -121,7 +121,7 @@ int ex(nodeType *p) {
 		//*********************************Case*******************************************	
 		case CASE:
 					ex(p->opr.op[0]);
-					fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n", last, base, counter);
+					fprintf( f1, "\t JEQ R%01d, R%01d, R%01d \n", last, base, counter);
 					fprintf( f1, "\t jnz\tL%03d \n", lbl1 = lbl++); 
 					ex(p->opr.op[1]);
 					ex(p->opr.op[2]);
@@ -247,10 +247,10 @@ int ex(nodeType *p) {
                    
 			}
 
-			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
+			if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger )) {;}
 			else if((leftType == Float || leftType == ConstFloat) && (rightType == Float || rightType == ConstFloat || rightType == Integer || rightType == ConstIntger)) {;}
 			else if((leftType == Char || leftType == ConstChar) && (rightType == Char || rightType == ConstChar || rightType == Integer || rightType == ConstIntger)) {;}
-			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString)) {;}
+			else if((leftType == String || leftType == ConstString) && (rightType == String || rightType == ConstString || rightType == Char || rightType == ConstChar)) {;}
 			else if((leftType == Bool || leftType == ConstBool) && (rightType == Bool || rightType == ConstBool || rightType == Integer || rightType == ConstIntger)) {;}
 			else if(leftType != rightType) 
 			{
@@ -259,6 +259,7 @@ int ex(nodeType *p) {
 				oprType = NULL;
 				break;
 			}
+						
 					
 			fprintf( f1, "\t mov %s, R%01d \n", p->opr.op[0]->id.name, last - 1);
 			last =0;
@@ -425,7 +426,7 @@ int ex(nodeType *p) {
 			case GREATER:
 				rightType = Bool;
 				if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t compGREATER R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t JG R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -437,7 +438,7 @@ int ex(nodeType *p) {
 			case LESS:
 				rightType = Bool;
 				if((type1 == Integer || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t compLESS R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t JL R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -449,7 +450,7 @@ int ex(nodeType *p) {
 			case GE:
 				rightType = Bool;
 				if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t compGE R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t JGE R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -461,7 +462,7 @@ int ex(nodeType *p) {
 			case LE:
 				rightType = Bool;
 				if((type1 ==Integer  || type1 == Float || type1 == ConstIntger || type1 == ConstFloat) && (type2 == Integer || type2 == Float || type2 == ConstIntger || type2 == ConstFloat)){
-					fprintf( f1, "\t compLE R%01d, R%01d, R%01d \n",last, i, j);
+					fprintf( f1, "\t JLE R%01d, R%01d, R%01d \n",last, i, j);
 					last ++;
 					counter++;
 				}
@@ -481,7 +482,7 @@ int ex(nodeType *p) {
 					oprType = NULL;
 					break;
 				}
-				fprintf( f1, "\t compNE R%01d, R%01d, R%01d \n",last, i, j);
+				fprintf( f1, "\t JNE R%01d, R%01d, R%01d \n",last, i, j);
 				last ++;
 				counter++;
 				oprType = NULL;
@@ -498,7 +499,7 @@ int ex(nodeType *p) {
 					oprType = NULL;
 					break;
 				}
-				fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n",last, i, j);
+				fprintf( f1, "\t JEQ R%01d, R%01d, R%01d \n",last, i, j);
 				last ++;
 				counter++;
 				oprType = NULL;
