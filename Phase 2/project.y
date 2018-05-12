@@ -18,6 +18,7 @@ int yyerrorvar(char *s, char *var);
 int yylex(void);
 int yylineno;
 FILE * f1;
+FILE * f2; 
 FILE * yyin;
 /* symbol table */
 int  symType[50];
@@ -391,39 +392,98 @@ void ftoa(float n, char res[], int afterpoint) {
 	}
 }
 
-int yyerror(char *s) { 
- fclose(f1);
- remove("output.txt"); 
- f1=fopen("output.txt","w");
- fprintf(f1, "Syntax Error Could not parse quadruples\n"); fprintf(stderr, "line number : %d %s\n", yylineno,s);    
- exit(0);
+int yyerror(char *s) 
+{ 
+	fclose(f1);
+	remove("output.txt"); 
+	f1=fopen("output.txt","w");
+	fprintf(f1, "Syntax Error Could not parse quadruples\n"); 
+	fprintf(stderr, "line number : %d %s\n", yylineno,s);    
+ 
+ 	fclose(f2);
+	remove("symbol.txt");
+	f2 = fopen("symbol.txt","w");
+	fprintf(f2, "Syntax Error was Found\n");
+ 	fprintf(stderr, "line number : %d %s\n", yylineno,s);    
+ 
+	exit(0);
 }
  
 int yyerrorvar(char *s, char *var) 
 {
 	fclose(f1);
-	int x= remove("output.txt");
-	f1=fopen("output.txt","w");
+	int x = remove("output.txt");
+	f1 = fopen("output.txt","w");
 	fprintf(f1, "Syntax Error Could not parse quadruples\n");
  	fprintf(f1, "line number: %d %s : %s\n", yylineno,s,var);
+	
+	fclose(f2);
+	x = remove("symbol.txt");
+	f2 = fopen("symbol.txt","w");
+	fprintf(f2, "Syntax Error was Found\n");
+ 	fprintf(f2, "line number: %d %s : %s\n", yylineno,s,var);
+	
  	exit(0);
 }
 
 int main(void) 
-{    yyin = fopen("input.txt", "r");
+{   
+	yyin = fopen("input.txt", "r");
 	f1=fopen("output.txt","w");
+	f2 = fopen("symbol.txt","w");
 	
-   if(!yyparse())
+	if(!yyparse())
 	{
 		printf("\nParsing complete\n");
+		
+		int i;
+		
+		fprintf(f2,"Used Variables :- \n");
+		for (i = 0 ; i < indexCount ; i ++)
+		{
+			if (symUsed[i] != 0)
+			{
+				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+			}
+		}
+		
+		fprintf(f2,"\nNot Used Variables :- \n");
+		for (i = 0 ; i < indexCount ; i ++)
+		{
+			if (symUsed[i] == 0)
+			{
+				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+			}
+		}
+		
+		fprintf(f2,"\n-----------------------------------------------\n");
+		
+		fprintf(f2,"\nInitiallized Variables :- \n");
+		for (i = 0 ; i < indexCount ; i ++)
+		{
+			if (symInit[i] != 0)
+			{
+				fprintf(f2,"%s of type %d and value = %s \n" ,symName[i],(typeEnum)symType[i],symValue[i]);
+			}
+		}
+		
+		fprintf(f2,"\nNot Initiallized Variables :- \n");
+		for (i = 0 ; i < indexCount ; i ++)
+		{
+			if (symInit[i] == 0)
+			{
+				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i],symValue[i]);
+			}
+		}
+						
 	}
 	else
 	{
 		printf("\nParsing failed\n");
 		return 0;
 	}
-	
-	fclose(yyin);
 	fclose(f1);
+	fclose(f2);
+	fclose(yyin);
     return 0;
 }
