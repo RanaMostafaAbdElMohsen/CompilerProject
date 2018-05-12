@@ -218,29 +218,33 @@ int ex(nodeType *p) {
 					leftType = p->opr.op[0]->id.type;
 					oprType = strdup("a");
 					permit = p->opr.op[0]->id.per;
-					if(permit == undeclared) {
+					if(permit == undeclared) 
+					{
 						fprintf( f1, "Error: %s is not declared \n", p->opr.op[0]->id.name);
 						oprType = NULL;
 						break;
 					}
-					//else if(permit == Constant){
-					//	fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
-					//	oprType = NULL;
-					//	break;
-					//}
-					else if(permit == OutOfScope) {
-						fprintf( f1, "Error: %s is already defined \n", p->opr.op[0]->id.name);
+					else if(permit == Constant && symInit[p->opr.op[0]->id.index] == 1)
+					{
+						fprintf( f1, "Error: %s must be a modifiable expression \n", p->opr.op[0]->id.name);
+						oprType = NULL;
+						break;
+					}
+					else if(permit == OutOfScope) 
+					{					
+					fprintf( f1, "Error: %s is already defined \n", p->opr.op[0]->id.name);
 						oprType = NULL;
 						break;
 					}
 					
 					symInit[p->opr.op[0]->id.index] = 1;
 					ex(p->opr.op[1]);
-					if(p->opr.op[1]->type == typeId) {
-						if(p->opr.op[1]->id.per != undeclared){
+					if(p->opr.op[1]->type == typeId) 
+					{
+						if(p->opr.op[1]->id.per != undeclared)
+						{
 							symUsed[p->opr.op[1]->id.index] = 1;
 						}
-                    
 					}
 
 					if((leftType == Integer || leftType == ConstIntger) && (rightType == Integer || rightType == ConstIntger || rightType == Float  || rightType == ConstFloat )) {;}
