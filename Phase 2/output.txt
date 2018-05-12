@@ -26,6 +26,8 @@
 	 mov c3, R0 
 	 mov R0,c2 
 	 mov s3, R0 
+	 mov R0, "5" 
+	 mov s4, R0 
 	 mov R0, 0 
 	 mov b3, R0 
 	 mov R0, null 
@@ -36,8 +38,11 @@
 	 mov z, R2 
 	 mov R3, null 
 	 mov result, R3 
-	 mov R4,i3 
-	 mov xew, R4 
+Warning : Assigning character to string
+	 mov R4, 'f' 
+	 mov gty, R4 
+	 mov R0,i3 
+	 mov xew, R0 
 	 mov R0, 5 
 	 neg R1, R0 
 	 mov x, R1 
