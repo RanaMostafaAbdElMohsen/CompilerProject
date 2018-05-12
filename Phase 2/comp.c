@@ -31,40 +31,38 @@ int ex(nodeType *p) {
 		//{ Integer, Float, Char, String, Bool, ConstIntger, ConstFloat, ConstChar, ConstString, ConstBool} 
 		rightType = p->con.type;
 		
-		if(
+		if
+		(
 			( leftType == 5 && ( rightType != 5 && rightType != 0 )) || 											//integer
 			( leftType == 6 && ( rightType != 6 && rightType != 1 && rightType != 5 && rightType != 0 )) || 		//float
 			( leftType == 7 && ( rightType != 7 && rightType != 2 )) || 											//char
 			( leftType == 8 && ( rightType != 8 && rightType != 3 && rightType != 7 && rightType != 2 )) || 		//string
 			( leftType == 9 && ( rightType != 9 && rightType != 4 && rightType != 5 && rightType != 0 ))    		//Bool
 		)
-		{
-			fprintf( f1," Error in type %d \n", p->con.type);
+		{			
+			yyerror("Error: incompatible types for assignment ");
+			//fprintf( f1," Error in type %d \n", p->con.type);
 			break;
 		}
 		
 		if (leftType == 9 || leftType == 4 )
 		{
 			
-			if (atoi(p->con.value) != 0 && atoi(p->con.value) != 1)
+			if (atoi(p->con.value) != 0 && atoi(p->con.value) != 1 && p->con.value != "true" && p->con.value != "false")
 			{
-				fprintf( f1," Error in type %d \n", p->con.type);
+				yyerror("Error: incompatible types for Boolean assignment ");
+				//fprintf( f1," Error in type %d \n", p->con.type);
 				break;
 			}
 		}
-		 
-		if(rightType == 0 ) 
-		{
-			value=atoi(p->con.value);
-		}
-		 
-		if ( leftType == 6 && ( rightType == 5 || rightType == 0 ))
+		
+		if ( (leftType == 6 || leftType == 1 ) && ( rightType == 5 || rightType == 0 ))
 		{
 			fprintf( f1, "Warning : Assigning integer to float\n");
 			strcat(p->con.value, ".0");
 		}
 		
-		if ( leftType == 8 && ( rightType == 7 || rightType == 2 ))
+		if ( (leftType == 8 || leftType == 3 ) && ( rightType == 7 || rightType == 2 ))
 		{
 			fprintf( f1, "Warning : Assigning character to string\n");
 		}
