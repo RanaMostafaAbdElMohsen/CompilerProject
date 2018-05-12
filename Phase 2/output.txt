@@ -27,6 +27,8 @@
 	 mov y,NULL 
 	 mov z,NULL 
 	 mov result,NULL 
+	 mov R0,i3 
+	 mov xew, R0 
 	 mov R0, 5 
 	 neg R1, R0 
 	 mov x, R1 
@@ -34,7 +36,8 @@
 	 mov R1, 1 
 	 add R2, R0, R1 
 	 mov y, R2 
-	 mov R0, 5 
+Warning : Assigning integer to float
+	 mov R0, 5.0 
 	 mov R1, .900000 
 	 sub R2, R0, R1 
 	 mov z, R2 
@@ -52,7 +55,8 @@
 	 add R2, R0, R1 
 	 mov testing, R2 
 	 mov R0,try 
-	 mov R1, 5 
+Warning : Assigning integer to float
+	 mov R1, 5.0 
 	 add R2, R0, R1 
 	 mov tewsy, R2 
 	 mov R0,tewsy 
@@ -73,6 +77,19 @@
 	 mul R5, R3, R4 
 	 add R6, R2, R5 
 	 mov x, R6 
+	 mov R0,x 
+	 mov R1, 10000 
+	 add R2, R0, R1 
+	 mov R3,y 
+	 inc R3 
+	 mov y, R3 
+	 mov R4,x 
+	 print R4
+	 mov R5,y 
+	 print R5
+Warning : Assigning integer to float
+	 mov R6, 90000.0 
+	 mov m, R6 
 	 mov R0, 0 
 	 mov i, R0 
 	 mov R0, 0 
@@ -80,13 +97,13 @@
 L000:
 	 mov R0,i 
 	 mov R1, 10 
-	 JL R2, R0, R1 
+	 compL R2, R0, R1 
 	 jnz	L001
 	 mov R3, false 
 	 mov flag, R3 
 	 mov R0,x 
 	 mov R1, 2 
-	 JG R2, R0, R1 
+	 compG R2, R0, R1 
 	jz	L002
 	 mov R3, true 
 	 mov flag, R3 
@@ -113,20 +130,65 @@ L004:
 	 mov R4, 2 
 	 mul R5, R3, R4 
 	 mov x, R5 
+	 mov R0,c 
+	 mov R1,a 
+	 compLE R2, R0, R1 
+	jz	L006
+	 mov R3,a 
+	 inc R3 
+	 mov a, R3 
+L006:
 	jmp	L004
 L005:
-	 mov R0, 999 
-	 mov R1,i3 
-	 add R2, R0, R1 
-	 mov i5, R2 
+	 mov R4, 999 
+	 mov R5,i3 
+	 add R6, R4, R5 
+	 mov i5, R6 
 	 mov R0,x 
 	 mov R1, 1 
-	 JEQ R2, R0, R1 
-	 jnz	L006 
+	 compEQ R2, R0, R1 
+	 jnz	L007 
 	 mov R2, 0 
 	 mov x, R2 
 	 jmp Label0 
-L006:
+L007:
 	 mov R0, 0 
 	 mov y, R0 
 Label0: 
+	 mov R1,b 
+	 mov R2,c 
+	 power R3, R1, R2 
+	 mov a, R3 
+	 mov R0,c 
+	 neg R1, R0 
+	 mov x, R1 
+	 mov R0,i5 
+	 mov R1,i3 
+	 compNE R2, R0, R1 
+	jz	L008
+	 mov R3,x 
+	 mov R4,i5 
+	 add R5, R3, R4 
+	 mov R6,x 
+	 mov R7, 5 
+	 compG R8, R6, R7 
+	jz	L009
+	 mov R9,x 
+	 mov R10, 2 
+	 div R11, R9, R10 
+	 mov R12,y 
+	 mov R13, 10 
+	 mul R14, R12, R13 
+	 mov R15,z 
+	 mov R16, 5.500000 
+	 sub R17, R15, R16 
+L009:
+	jmp	L010
+L008:
+	 mov R18, "The_End" 
+	 mov done, R18 
+	 mov R0,done 
+	 print R0
+L010:
+	 mov R1, "Finish" 
+	 mov Finish, R1 
