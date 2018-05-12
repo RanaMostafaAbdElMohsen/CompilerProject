@@ -29,6 +29,7 @@ int symBraces[50];
 permission   symPerm[50];
 int indexCount=0;
 int brace=0;
+int counter;
 %}
 %union {
     int iValue;                 /* integer value */
@@ -99,12 +100,13 @@ stmt:   Type IDENTIFIER SEMICOLON	%prec IFX                  {$$=id(indexCount,$
 		
 		| PRINT expression 	SEMICOLON	                         {$$ = opr(PRINT, 1, $2); printf("Print\n");}
 			                                            	
-
+      
 		| braceScope											{$$=$1; printf("New braces scope\n");}
 		
 		;
 
  
+
 		
 braceScope:	 OBRACE braceIncrementor stmtlist EBRACE			{ char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), $3, opr(EBRACE,0)); brace--;printf("Stmt brace\n");}
 			| OBRACE  EBRACE	                                { char c[] = {}; itoa(brace, c, 10); $$ = opr(OBRACE, 3, con(c ,0), NULL, opr(EBRACE,0)); brace--;printf("Empty brace\n");}
