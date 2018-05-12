@@ -2604,7 +2604,7 @@ int main(void)
 		{
 			if (symInit[i] != 0)
 			{
-				fprintf(f2,"%s of type %s and value = %s \n" ,symName[i],idtype[symType[i]],symValue[i]);
+				fprintf(f2,"%s of type %s\n" ,symName[i],idtype[symType[i]]);
 			}
 		}
 		

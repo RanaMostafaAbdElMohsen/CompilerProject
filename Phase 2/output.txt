@@ -18,13 +18,22 @@
 	 mov o, R2 
 	 mov R0, 'b' 
 	 mov x, R0 
- Error in type 0 
-	 mov g, R-1 
- Error in type 0 
-	 mov h, R-1 
-	 mov R0,x 
-Error: incompatible types for assignment 
-	 mov R1,h 
-	 mov test, R1 
- Error in type 1 
-	 mov hes, R-1 
+	 mov R0, 1 
+	 mov g, R0 
+Warning : Assigning integer to float
+	 mov R0, 5.0 
+	 mov h, R0 
+	 mov R0,h 
+	 mov test, R0 
+	 mov R0, 6.900000 
+	 mov hes, R0 
+	 mov R0,h 
+	 mov R1, 1.799999 
+	 add R2, R0, R1 
+	 mov testing, R2 
+	 mov R0,h 
+	 mov R1, 5 
+	 add R2, R0, R1 
+	 mov tewsy, R2 
+	 mov tewsy,NULL 
+	 print R-1

@@ -30,11 +30,11 @@ int ex(nodeType *p) {
 		rightType = p->con.type;
 		
 		if(
-			( leftType == 5 && ( rightType != 5 || rightType != 0 )) || 											//integer
-			( leftType == 6 && ( rightType != 6 || rightType != 1 || rightType != 5 || rightType != 0 )) || 		//float
-			( leftType == 7 && ( rightType != 7 || rightType != 2 )) || 											//char
-			( leftType == 8 && ( rightType != 8 || rightType != 3 || rightType != 7 || rightType != 2 )) || 		//string
-			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
+			( leftType == 5 && ( rightType != 5 && rightType != 0 )) || 											//integer
+			( leftType == 6 && ( rightType != 6 && rightType != 1 && rightType != 5 && rightType != 0 )) || 		//float
+			( leftType == 7 && ( rightType != 7 && rightType != 2 )) || 											//char
+			( leftType == 8 && ( rightType != 8 && rightType != 3 && rightType != 7 && rightType != 2 )) || 		//string
+			( leftType == 9 && ( rightType != 9 && rightType != 4 && rightType != 5 && rightType != 0 ))    		//Bool
 		)
 		{
 			fprintf( f1," Error in type %d \n", p->con.type);
@@ -51,14 +51,13 @@ int ex(nodeType *p) {
 			}
 		}
 		
-		if ( leftType == 6 && ( rightType != 5 || rightType != 0 ))
+		if ( leftType == 6 && ( rightType == 5 || rightType == 0 ))
 		{
 			fprintf( f1, "Warning : Assigning integer to float\n");
-			float temp = atoi(p->con.value) + 0.0;
-			ftoa(temp,p->con.value,1);
+			strcat(p->con.value, ".0");
 		}
 		
-		if ( leftType == 8 && ( rightType != 7 || rightType != 2 ))
+		if ( leftType == 8 && ( rightType == 7 || rightType == 2 ))
 		{
 			fprintf( f1, "Warning : Assigning character to string\n");
 		}

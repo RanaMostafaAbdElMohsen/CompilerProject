@@ -13,6 +13,11 @@ x = 'b';
 
 const int g = 1;
 const float h = 5;
-const string lo = x;
 const float test = h;
 const float hes = 6.9;
+
+float testing = h + 1.8;
+
+float tewsy = h + 5;
+
+print (tewsy);
