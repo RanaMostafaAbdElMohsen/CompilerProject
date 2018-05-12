@@ -37,7 +37,7 @@ int ex(nodeType *p) {
 			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
 		)
 		{
-			yyerrorvar(" Error in type %d \n", p->con.type) 
+			fprintf( f1," Error in type %d \n", p->con.type);
 			break;
 		}
 		
