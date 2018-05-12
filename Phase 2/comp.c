@@ -37,6 +37,7 @@ int ex(nodeType *p) {
 			( leftType == 9 && ( rightType != 9 || rightType != 4 || rightType != 5 || rightType != 0 ))    		//Bool
 		)
 		{
+
 			fprintf( f1," Error in type %d \n", p->con.type);
 			break;
 		}
@@ -61,8 +62,15 @@ int ex(nodeType *p) {
 		rightType = p->id.type;
     	if (oprType!=NULL && strcmp(oprType,strdup("a")) == 0 )
     	{	
+    		if (symInit[p->id.index] == 0)
+    		{
+    			fprintf(f1,"\t WARNING: Variable %s is not initialized\n",p->id.name);	
+    		}
+
+    		fprintf(f1,"\t mov R%01d,%s \n",last,p->id.name);
     		rightType = p->id.type;
-			
+    		last ++;
+			counter ++;
 		}
 		else 
     	{
