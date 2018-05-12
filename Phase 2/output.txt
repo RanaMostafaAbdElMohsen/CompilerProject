@@ -1,1 +1,22 @@
-hello there
+	 mov f,NULL 
+	 mov r,NULL 
+	 mov c,NULL 
+	 mov t,NULL 
+	 mov R0, 5 
+	 mov y, R0 
+	 mov R0, 7.599999 
+	 mov o, R0 
+	 mov R0, 's' 
+	 mov x, R0 
+	 mov R0,y 
+	 mov R1, 1 
+	 add R2, R0, R1 
+	 mov y, R2 
+	 mov R0,o 
+	 mov R1, .900000 
+	 sub R2, R0, R1 
+	 mov o, R2 
+	 mov R0, 'b' 
+	 mov x, R0 
+	 mov R0,x 
+Error: incompatible types for assignment 

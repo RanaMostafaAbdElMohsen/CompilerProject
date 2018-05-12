@@ -1,0 +1,24 @@
+Used Variables :- 
+y of type 0 
+o of type 1 
+x of type 2 
+
+Not Used Variables :- 
+f of type 0 
+r of type 3 
+c of type 2 
+t of type 1 
+fady of type 3 
+
+-----------------------------------------------
+Initiallized Variables :- 
+y of type 0 and value = (null) 
+o of type 1 and value = (null) 
+x of type 2 and value = (null) 
+fady of type 3 and value = (null) 
+
+Not Initiallized Variables :- 
+f of type 0 
+r of type 3 
+c of type 2 
+t of type 1 

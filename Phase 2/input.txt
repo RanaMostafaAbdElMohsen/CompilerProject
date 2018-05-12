@@ -1,50 +1,13 @@
-bool x=false;
-int i=0;
-if(i==0)
-{
-int y;
-}
-while(a>0)
-{
-int z;
-}
-const int a=0;
-x=x+2;
-y=y/2;
-z=z*2;
-i/=2;
+int f;
+string r;
+char c;
+float t;
 
-for(int i=0;i<10;i++)
-{
-k=k+1;
-}
+int y = 5;
+float o = 7.6;
+char x = 's';
 
-do {
-a=1;
-}while(a<0);
-
-print a ;
-
-switch (x)
-{
-  case 1:
-	int x;
-	break;
-
-   case 2:
-	int x;
-	break;
-   
-    default:
-	int z;
-	break;
-		
-
-}
-
-int a(int z)
-{
-print x;
-
-}
-return  int 
+y = y + 1;
+o = o - 0.9;
+x = 'b';
+string fady = x;
