@@ -44,60 +44,58 @@
      BREAK = 260,
      DEFAULT = 261,
      SWITCH = 262,
-     END = 263,
-     DO = 264,
-     CASE = 265,
-     OBRACE = 266,
-     EBRACE = 267,
-     ORBRACKET = 268,
-     ERBRACKET = 269,
-     OSBRACKET = 270,
-     ESBRACKET = 271,
-     SEMICOLON = 272,
-     COLON = 273,
-     INCREMENT = 274,
-     DECREMENT = 275,
-     PEQUAL = 276,
-     MEQUAL = 277,
-     MULEQUAL = 278,
-     DIVEQUAL = 279,
-     GREATER = 280,
-     LESS = 281,
-     GE = 282,
-     LE = 283,
-     EQ = 284,
-     NE = 285,
-     PLUS = 286,
-     MINUS = 287,
-     MUL = 288,
-     DIV = 289,
-     REM = 290,
-     AND = 291,
-     OR = 292,
-     NOT = 293,
-     WHILE = 294,
-     FOR = 295,
-     IF = 296,
-     ELSE = 297,
-     PRINT = 298,
-     INT = 299,
-     FLOAT = 300,
-     DOUBLE = 301,
-     LONG = 302,
-     CHAR = 303,
-     STRING = 304,
-     CONST = 305,
-     INTEGERNUMBER = 306,
-     FLOATNUMBER = 307,
-     TEXT = 308,
-     CHARACTER = 309,
-     IDENTIFIER = 310,
-     ASSIGN = 311,
-     POWER = 312,
-     FALSE = 313,
-     TRUE = 314,
-     BOOL = 315,
-     IFX = 316
+     DO = 263,
+     CASE = 264,
+     OBRACE = 265,
+     EBRACE = 266,
+     ORBRACKET = 267,
+     ERBRACKET = 268,
+     SEMICOLON = 269,
+     COLON = 270,
+     INCREMENT = 271,
+     DECREMENT = 272,
+     PEQUAL = 273,
+     MEQUAL = 274,
+     MULEQUAL = 275,
+     DIVEQUAL = 276,
+     GREATER = 277,
+     LESS = 278,
+     GE = 279,
+     LE = 280,
+     EQ = 281,
+     NE = 282,
+     PLUS = 283,
+     MINUS = 284,
+     MUL = 285,
+     DIV = 286,
+     REM = 287,
+     AND = 288,
+     OR = 289,
+     NOT = 290,
+     WHILE = 291,
+     FOR = 292,
+     IF = 293,
+     ELSE = 294,
+     PRINT = 295,
+     INT = 296,
+     FLOAT = 297,
+     DOUBLE = 298,
+     LONG = 299,
+     CHAR = 300,
+     STRING = 301,
+     CONST = 302,
+     ASSIGN = 303,
+     POWER = 304,
+     FALSE = 305,
+     TRUE = 306,
+     BOOL = 307,
+     INTEGERNUMBER = 308,
+     FLOATNUMBER = 309,
+     TEXT = 310,
+     CHARACTER = 311,
+     IDENTIFIER = 312,
+     IFX = 313,
+     UMINUS = 314
    };
 #endif
 /* Tokens.  */
@@ -106,66 +104,81 @@
 #define BREAK 260
 #define DEFAULT 261
 #define SWITCH 262
-#define END 263
-#define DO 264
-#define CASE 265
-#define OBRACE 266
-#define EBRACE 267
-#define ORBRACKET 268
-#define ERBRACKET 269
-#define OSBRACKET 270
-#define ESBRACKET 271
-#define SEMICOLON 272
-#define COLON 273
-#define INCREMENT 274
-#define DECREMENT 275
-#define PEQUAL 276
-#define MEQUAL 277
-#define MULEQUAL 278
-#define DIVEQUAL 279
-#define GREATER 280
-#define LESS 281
-#define GE 282
-#define LE 283
-#define EQ 284
-#define NE 285
-#define PLUS 286
-#define MINUS 287
-#define MUL 288
-#define DIV 289
-#define REM 290
-#define AND 291
-#define OR 292
-#define NOT 293
-#define WHILE 294
-#define FOR 295
-#define IF 296
-#define ELSE 297
-#define PRINT 298
-#define INT 299
-#define FLOAT 300
-#define DOUBLE 301
-#define LONG 302
-#define CHAR 303
-#define STRING 304
-#define CONST 305
-#define INTEGERNUMBER 306
-#define FLOATNUMBER 307
-#define TEXT 308
-#define CHARACTER 309
-#define IDENTIFIER 310
-#define ASSIGN 311
-#define POWER 312
-#define FALSE 313
-#define TRUE 314
-#define BOOL 315
-#define IFX 316
+#define DO 263
+#define CASE 264
+#define OBRACE 265
+#define EBRACE 266
+#define ORBRACKET 267
+#define ERBRACKET 268
+#define SEMICOLON 269
+#define COLON 270
+#define INCREMENT 271
+#define DECREMENT 272
+#define PEQUAL 273
+#define MEQUAL 274
+#define MULEQUAL 275
+#define DIVEQUAL 276
+#define GREATER 277
+#define LESS 278
+#define GE 279
+#define LE 280
+#define EQ 281
+#define NE 282
+#define PLUS 283
+#define MINUS 284
+#define MUL 285
+#define DIV 286
+#define REM 287
+#define AND 288
+#define OR 289
+#define NOT 290
+#define WHILE 291
+#define FOR 292
+#define IF 293
+#define ELSE 294
+#define PRINT 295
+#define INT 296
+#define FLOAT 297
+#define DOUBLE 298
+#define LONG 299
+#define CHAR 300
+#define STRING 301
+#define CONST 302
+#define ASSIGN 303
+#define POWER 304
+#define FALSE 305
+#define TRUE 306
+#define BOOL 307
+#define INTEGERNUMBER 308
+#define FLOATNUMBER 309
+#define TEXT 310
+#define CHARACTER 311
+#define IDENTIFIER 312
+#define IFX 313
+#define UMINUS 314
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+
+/* Line 1676 of yacc.c  */
+#line 37 "project.y"
+
+    int iValue;                 /* integer value */
+	float fValue;               /* float Value */
+    char * sValue;              /* string value */
+	char * cValue;               /* character value */
+	char * id ;                 /* id value */
+    nodeType *nPtr;             /* node pointer */
+
+
+
+/* Line 1676 of yacc.c  */
+#line 181 "y.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

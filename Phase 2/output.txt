@@ -18,5 +18,8 @@
 	 mov o, R2 
 	 mov R0, 'b' 
 	 mov x, R0 
-	 mov R0,x 
-Error: incompatible types for assignment 
+Error: g must be a modifiable expression 
+Error: h must be a modifiable expression 
+Error: lo must be a modifiable expression 
+Error: test must be a modifiable expression 
+Error: hes must be a modifiable expression 

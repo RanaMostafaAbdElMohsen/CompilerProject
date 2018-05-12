@@ -51,6 +51,18 @@ int ex(nodeType *p) {
 			}
 		}
 		
+		if ( leftType == 6 && ( rightType != 5 || rightType != 0 ))
+		{
+			fprintf( f1, "Warning : Assigning integer to float\n");
+			float temp = atoi(p->con.value) + 0.0;
+			ftoa(temp,p->con.value,1);
+		}
+		
+		if ( leftType == 8 && ( rightType != 7 || rightType != 2 ))
+		{
+			fprintf( f1, "Warning : Assigning character to string\n");
+		}
+		
 		fprintf( f1, "\t mov R%01d, %s \n", last,p->con.value);
 		last ++;
 		counter ++;
@@ -113,7 +125,7 @@ int ex(nodeType *p) {
 		//*********************************Case*******************************************	
 		case CASE:
 					ex(p->opr.op[0]);
-					fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n", last, base, counter);
+					fprintf( f1, "\t BEQ R%01d, R%01d, R%01d \n", last, base, counter);
 					fprintf( f1, "\t jnz\tL%03d \n", lbl1 = lbl++); 
 					ex(p->opr.op[1]);
 					ex(p->opr.op[2]);
@@ -457,7 +469,7 @@ int ex(nodeType *p) {
                                 oprType = NULL;
 								break;
 							}
-							fprintf( f1, "\t compNE R%01d, R%01d, R%01d \n",last, i, j);
+							fprintf( f1, "\t BNE R%01d, R%01d, R%01d \n",last, i, j);
 							last ++;
 							counter++;
                             oprType = NULL;
@@ -473,7 +485,7 @@ int ex(nodeType *p) {
 								oprType = NULL;
                                 break;
 							}
-							fprintf( f1, "\t compEQ R%01d, R%01d, R%01d \n",last, i, j);
+							fprintf( f1, "\t BE R%01d, R%01d, R%01d \n",last, i, j);
 							last ++;
 							counter++;
                             oprType = NULL;

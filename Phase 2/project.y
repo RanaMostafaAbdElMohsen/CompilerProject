@@ -5,6 +5,7 @@
 #include <string.h>
 #include "structs.h"
 #include <math.h>
+char* idtype [10] = {"Integer", "Float", "Char", "String", "Bool", "ConstIntger", "ConstFloat", "ConstChar", "ConstString", "ConstBool"};
 /* prototypes */
 nodeType * opr(int oper, int nops, ...);
 nodeType * id(int index, int type, int brace, permission perm, char * name);
@@ -32,7 +33,8 @@ int indexCount=0;
 int brace=0;
 int counter;
 %}
-%union {
+%union 
+{
     int iValue;                 /* integer value */
 	float fValue;               /* float Value */
     char * sValue;              /* string value */
@@ -367,7 +369,8 @@ int toStr(int x, char str[], int d) {
 	return i;
 }
 
-void ftoa(float n, char res[], int afterpoint) {
+void ftoa(float n, char res[], int afterpoint) 
+{
 	
 	// Extract integer part
 	int ipart = (int)n;
@@ -443,7 +446,7 @@ int main(void)
 		{
 			if (symUsed[i] != 0)
 			{
-				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
 			}
 		}
 		
@@ -452,7 +455,7 @@ int main(void)
 		{
 			if (symUsed[i] == 0)
 			{
-				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i]);
+				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
 			}
 		}
 		
@@ -463,7 +466,7 @@ int main(void)
 		{
 			if (symInit[i] != 0)
 			{
-				fprintf(f2,"%s of type %d and value = %s \n" ,symName[i],(typeEnum)symType[i],symValue[i]);
+				fprintf(f2,"%s of type %s and value = %s \n" ,symName[i],idtype[symType[i]],symValue[i]);
 			}
 		}
 		
@@ -472,7 +475,7 @@ int main(void)
 		{
 			if (symInit[i] == 0)
 			{
-				fprintf(f2,"%s of type %d \n",symName[i],(typeEnum)symType[i],symValue[i]);
+				fprintf(f2,"%s of type %s \n",symName[i],idtype[symType[i]]);
 			}
 		}
 						
@@ -485,5 +488,5 @@ int main(void)
 	fclose(f1);
 	fclose(f2);
 	fclose(yyin);
-    return 0;
+	return 0;
 }

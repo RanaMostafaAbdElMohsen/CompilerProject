@@ -10,4 +10,9 @@ char x = 's';
 y = y + 1;
 o = o - 0.9;
 x = 'b';
-string fady = x;
+
+const int g = 1;
+const float h= 5;
+const string lo = x;
+const float test = h;
+const float hes = 6.9;

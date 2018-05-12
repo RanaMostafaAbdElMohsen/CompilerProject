@@ -1,24 +1,33 @@
 Used Variables :- 
-y of type 0 
-o of type 1 
-x of type 2 
+y of type Integer 
+o of type Float 
 
 Not Used Variables :- 
-f of type 0 
-r of type 3 
-c of type 2 
-t of type 1 
-fady of type 3 
+f of type Integer 
+r of type String 
+c of type Char 
+t of type Float 
+x of type Char 
+g of type ConstIntger 
+h of type ConstFloat 
+lo of type ConstString 
+test of type ConstFloat 
+hes of type ConstFloat 
 
 -----------------------------------------------
+
 Initiallized Variables :- 
-y of type 0 and value = (null) 
-o of type 1 and value = (null) 
-x of type 2 and value = (null) 
-fady of type 3 and value = (null) 
+y of type Integer and value = (null) 
+o of type Float and value = (null) 
+x of type Char and value = (null) 
 
 Not Initiallized Variables :- 
-f of type 0 
-r of type 3 
-c of type 2 
-t of type 1 
+f of type Integer 
+r of type String 
+c of type Char 
+t of type Float 
+g of type ConstIntger 
+h of type ConstFloat 
+lo of type ConstString 
+test of type ConstFloat 
+hes of type ConstFloat 
